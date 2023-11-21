@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pCamera = Camera.main;
         controller = GetComponent<CharacterController>();
+        controller.isTrigger = false;
     }
 
     private void Start()
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+        //Move();
     }
 
     private void IsGrounded()
