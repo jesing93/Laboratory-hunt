@@ -11,16 +11,27 @@ public class PlayerController : MonoBehaviour
     //Variables
     private Vector3 velocity;
     private bool isGrounded;
+    private bool isJumping;
+    private bool isFiring;
 
     //Movement
-    private float moveSpeed = 4.0f;
-    private float jumpHeight = 1.0f;
+    private float moveSpeed = 6.0f;
+    private float jumpPower = 1.0f;
+    private float maxJumpHeight = 1.0f;
+    private float maxJumpTime = 0.5f;
+    private float initialJumpVelocity;
     private float gravityValue = -9.81f;
+    private float groundedGravity = -.05f;
 
     private float hInput;
     private float vInput;
+    private bool jumpInput;
+    private bool fireInput;
 
     private Vector3 direction;
+    private Vector3 currentMovementInput;
+    private Vector3 currentMovement;
+    private Vector3 currentRunMovement;
 
     //Components
     private Camera pCamera;
@@ -51,7 +62,11 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pCamera = Camera.main;
         controller = GetComponent<CharacterController>();
-        controller.isTrigger = false;
+
+        //Gravity setup
+        float timeToApex = maxJumpTime / 2;
+        gravityValue = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+        initialJumpVelocity = (2 / maxJumpHeight) / timeToApex;
     }
 
     private void Start()
@@ -64,11 +79,15 @@ public class PlayerController : MonoBehaviour
     {
         IsGrounded();
         PlayerInputs();
+        Fire();
+        Move();
+        HandleAnimation();
+        HandleGravity();
+        Jump();
     }
 
     private void FixedUpdate()
     {
-        //Move();
     }
 
     private void IsGrounded()
@@ -81,27 +100,82 @@ public class PlayerController : MonoBehaviour
         //Get Imputs
         hInput = Input.GetAxisRaw("Horizontal");
         vInput = Input.GetAxisRaw("Vertical");
+        jumpInput = Input.GetButtonDown("Jump");
+        fireInput = Input.GetButton("Fire1");
     }
 
     private void Move()
     {
         //Calculate movement direction
         direction = (orientation.forward * vInput + orientation.right * hInput).normalized;
+        //Vector3 movement = direction * moveSpeed * Time.deltaTime;
 
-        controller.Move(direction * moveSpeed * Time.deltaTime);
+        currentMovement.x = direction.x * moveSpeed * Time.deltaTime;
+        currentMovement.z = direction.z * moveSpeed * Time.deltaTime;
+
+        currentRunMovement.x = direction.x * moveSpeed * 1.5f * Time.deltaTime;
+        currentRunMovement.z = direction.z * moveSpeed * 1.5f * Time.deltaTime;
+
+        if (!isFiring)
+        {
+            controller.Move(currentRunMovement);
+        }
+        else
+        {
+            controller.Move(currentMovement);
+        }
 
         //Rotate to camera direction
         transform.rotation = orientation.rotation;
     }
 
+    private void Fire()
+    {
+        //TODO Handle fire
+        if (fireInput && isGrounded && !isJumping)
+        {
+            isFiring = true;
+        }
+        else
+        {
+            isFiring = false;
+        }
+    }
+
     private void Jump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (!isJumping && jumpInput && isGrounded)
         {
-            velocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            isJumping = true;
+            currentMovement.y = currentRunMovement.y = initialJumpVelocity;
+            
+            //velocity.y += Mathf.Sqrt(jumpPower * -3.0f * gravityValue);
         }
-        velocity.y += gravityValue * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        else if(isGrounded) 
+        {
+            isJumping = false;
+        }
+        //velocity.y += gravityValue * Time.deltaTime;
+        //controller.Move(velocity * Time.deltaTime);
+    }
+
+    private void HandleGravity()
+    {
+        if(isGrounded)
+        {
+            currentMovement.y = groundedGravity;
+            currentRunMovement.y = groundedGravity;
+        }
+        else
+        {
+            currentMovement.y += gravityValue * Time.deltaTime;
+            currentRunMovement.y += gravityValue * Time.deltaTime;
+        }
+    }
+
+    private void HandleAnimation()
+    {
+        //TODO: Handle animation function
     }
 
     #endregion
