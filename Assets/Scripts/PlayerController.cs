@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
 {
     #region variables
     //Variables
-    private Vector3 velocity;
     private bool isGrounded;
     private bool isJumping;
     private bool isFiring;
@@ -113,8 +112,8 @@ public class PlayerController : MonoBehaviour
         currentMovement.x = direction.x * moveSpeed * Time.deltaTime;
         currentMovement.z = direction.z * moveSpeed * Time.deltaTime;
 
-        currentRunMovement.x = direction.x * moveSpeed * 1.5f * Time.deltaTime;
-        currentRunMovement.z = direction.z * moveSpeed * 1.5f * Time.deltaTime;
+        currentRunMovement.x = currentMovement.x * 1.5f;
+        currentRunMovement.z = currentMovement.z * 1.5f;
 
         if (!isFiring)
         {
@@ -151,7 +150,7 @@ public class PlayerController : MonoBehaviour
             
             //velocity.y += Mathf.Sqrt(jumpPower * -3.0f * gravityValue);
         }
-        else if(isGrounded) 
+        else if(isJumping && !jumpInput && isGrounded) 
         {
             isJumping = false;
         }
@@ -163,8 +162,8 @@ public class PlayerController : MonoBehaviour
     {
         if(isGrounded)
         {
-            currentMovement.y = groundedGravity;
-            currentRunMovement.y = groundedGravity;
+            currentMovement.y = groundedGravity * Time.deltaTime;
+            currentRunMovement.y = groundedGravity * Time.deltaTime;
         }
         else
         {
