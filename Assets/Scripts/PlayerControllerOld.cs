@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 
-public class PlayerController : MonoBehaviour
+public class PlayerControllerOld : MonoBehaviour
 {
     #region variables
     //Variables
@@ -14,8 +14,13 @@ public class PlayerController : MonoBehaviour
     private bool isFiring;
 
     //Movement
-    private float moveSpeed = 2.0f;
-    private float jumpPower = 1500.0f;
+    private float moveSpeed = 6.0f;
+    //private float jumpPower = 1.0f;
+    private float maxJumpHeight = 1.0f;
+    private float maxJumpTime = 0.5f;
+    private float initialJumpVelocity;
+    private float gravityValue = -9.81f;
+    private float groundedGravity = -.05f;
 
     private float hInput;
     private float vInput;
@@ -30,15 +35,15 @@ public class PlayerController : MonoBehaviour
     //Components
     private Camera pCamera;
     private Rigidbody rb;
+    private CharacterController controller;
     [SerializeField]
     private Transform orientation;
     [SerializeField]
     private GameObject head;
-    private Animator animator;
 
 
     //Singletone
-    public static PlayerController instance;
+    public static PlayerControllerOld instance;
 
     public Transform Orientation { get => orientation; set => orientation = value; }
     public GameObject Head { get => head; }
@@ -54,8 +59,13 @@ public class PlayerController : MonoBehaviour
 
         //Components
         rb = GetComponent<Rigidbody>();
-        animator = GetComponentInChildren<Animator>();
         pCamera = Camera.main;
+        controller = GetComponent<CharacterController>();
+
+        //Gravity setup
+        float timeToApex = maxJumpTime / 2;
+        gravityValue = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+        initialJumpVelocity = (2 / maxJumpHeight) / timeToApex;
     }
 
     private void Start()
@@ -70,8 +80,9 @@ public class PlayerController : MonoBehaviour
         PlayerInputs();
         Fire();
         Move();
-        Jump();
         HandleAnimation();
+        HandleGravity();
+        Jump();
     }
 
     private void FixedUpdate()
@@ -80,18 +91,7 @@ public class PlayerController : MonoBehaviour
 
     private void IsGrounded()
     {
-        //Cast a ray down from player position
-        Ray ray = new Ray(transform.position, Vector3.down);
-
-        //If collides, can jump
-        if (Physics.Raycast(ray, 1.1f))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        isGrounded = controller.isGrounded;
     }
 
     private void PlayerInputs()
@@ -105,34 +105,23 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if(hInput != 0 || vInput != 0)
+        //Calculate movement direction
+        direction = (orientation.forward * vInput + orientation.right * hInput).normalized;
+        //Vector3 movement = direction * moveSpeed * Time.deltaTime;
+
+        currentMovement.x = direction.x * moveSpeed * Time.deltaTime;
+        currentMovement.z = direction.z * moveSpeed * Time.deltaTime;
+
+        currentRunMovement.x = currentMovement.x * 1.5f;
+        currentRunMovement.z = currentMovement.z * 1.5f;
+
+        if (!isFiring)
         {
-            //Calculate movement direction
-            direction = (orientation.forward * vInput + orientation.right * hInput).normalized;
-            //Vector3 movement = direction * moveSpeed * Time.deltaTime;
-
-            currentMovement.x = direction.x * moveSpeed;
-            currentMovement.z = direction.z * moveSpeed;
-
-            currentRunMovement.x = currentMovement.x * 1.5f;
-            currentRunMovement.z = currentMovement.z * 1.5f;
-
-            currentMovement.y = currentRunMovement.y = rb.velocity.y;
-
-            if (!isFiring)
-            {
-                rb.velocity = currentRunMovement;
-            }
-            else
-            {
-                rb.velocity = currentMovement;
-            }
+            controller.Move(currentRunMovement);
         }
         else
         {
-            currentMovement = Vector3.zero;
-            currentMovement.y = rb.velocity.y; 
-            rb.velocity = currentMovement;
+            controller.Move(currentMovement);
         }
 
         //Rotate to camera direction
@@ -157,7 +146,9 @@ public class PlayerController : MonoBehaviour
         if (!isJumping && jumpInput && isGrounded)
         {
             isJumping = true;
-            rb.AddForce(0, jumpPower, 0);
+            currentMovement.y = currentRunMovement.y = initialJumpVelocity;
+            
+            //velocity.y += Mathf.Sqrt(jumpPower * -3.0f * gravityValue);
         }
         else if(isJumping && !jumpInput && isGrounded) 
         {
@@ -167,19 +158,23 @@ public class PlayerController : MonoBehaviour
         //controller.Move(velocity * Time.deltaTime);
     }
 
-    private void HandleAnimation()
+    private void HandleGravity()
     {
-        //TODO: Handle animation function
-        animator.SetFloat("MoveX", vInput);
-        animator.SetFloat("MoveY", hInput);
-        if(vInput != 0 || hInput != 0)
+        if(isGrounded)
         {
-            animator.SetBool("isMoving", true);
+            currentMovement.y = groundedGravity * Time.deltaTime;
+            currentRunMovement.y = groundedGravity * Time.deltaTime;
         }
         else
         {
-            animator.SetBool("isMoving", false);
+            currentMovement.y += gravityValue * Time.deltaTime;
+            currentRunMovement.y += gravityValue * Time.deltaTime;
         }
+    }
+
+    private void HandleAnimation()
+    {
+        //TODO: Handle animation function
     }
 
     #endregion
