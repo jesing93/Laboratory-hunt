@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
 
         yRotation += mouseX;
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        xRotation = Mathf.Clamp(xRotation, -45f, 45f);
 
         //Rotate camera and orientations smoothly
         Quaternion targetXRotation = Quaternion.Euler(xRotation, yRotation, 0);
@@ -30,5 +30,14 @@ public class CameraController : MonoBehaviour
 
         //Rotate the player instead of the camera
         PlayerController.instance.Orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
+
+    public void SwitchToTPS() {
+        transform.localPosition = new Vector3(0.75f, 0.7f, -1.5f);
+    }
+
+    public void SwitchToFPS()
+    {
+        transform.localPosition = new Vector3(0f, 0f, 0f);
     }
 }

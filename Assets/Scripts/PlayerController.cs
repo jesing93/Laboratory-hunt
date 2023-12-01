@@ -1,3 +1,4 @@
+using DigitalRuby.PyroParticles;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
     private bool isFiring;
+    private bool FPSMode;
 
     //Movement
     private float moveSpeed = 2.0f;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private float hInput;
     private float vInput;
     private bool jumpInput;
+    private bool cameraModeInput;
     private bool fireInput;
 
     private Vector3 direction;
@@ -35,6 +38,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject head;
     private Animator animator;
+    [SerializeField]
+    private GameObject playerMesh;
+    [SerializeField]
+    private Transform firePoint;
+    private FireBaseScript fireAnimController;
 
 
     //Singletone
@@ -42,6 +50,7 @@ public class PlayerController : MonoBehaviour
 
     public Transform Orientation { get => orientation; set => orientation = value; }
     public GameObject Head { get => head; }
+    public Transform FirePoint { get => firePoint; }
 
     #endregion
 
@@ -56,6 +65,10 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         pCamera = Camera.main;
+        fireAnimController = GetComponentInChildren<FireBaseScript>();
+
+        //Initialize
+        FPSMode = false;
     }
 
     private void Start()
@@ -71,6 +84,7 @@ public class PlayerController : MonoBehaviour
         Fire();
         Move();
         Jump();
+        SwitchCamera();
         HandleAnimation();
     }
 
@@ -101,6 +115,7 @@ public class PlayerController : MonoBehaviour
         vInput = Input.GetAxisRaw("Vertical");
         jumpInput = Input.GetButtonDown("Jump");
         fireInput = Input.GetButton("Fire1");
+        cameraModeInput = Input.GetKeyDown(KeyCode.F);
     }
 
     private void Move()
@@ -145,6 +160,7 @@ public class PlayerController : MonoBehaviour
         if (fireInput && isGrounded && !isJumping)
         {
             isFiring = true;
+            fireAnimController.Duration = 1;
         }
         else
         {
@@ -180,6 +196,35 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("isMoving", false);
         }
+    }
+
+    private void SwitchCamera()
+    {
+        if (cameraModeInput)
+        {
+            if (FPSMode)
+            {
+                SwitchToTPS();
+            }
+            else
+            {
+                SwitchToFPS();
+            }
+        }
+    }
+
+    public void SwitchToTPS()
+    {
+        FPSMode = false;
+        playerMesh.SetActive(true);
+        CameraHolder.instance.SwitchToTPS();
+    }
+
+    public void SwitchToFPS()
+    {
+        FPSMode = true;
+        playerMesh.SetActive(false);
+        CameraHolder.instance.SwitchToFPS();
     }
 
     #endregion

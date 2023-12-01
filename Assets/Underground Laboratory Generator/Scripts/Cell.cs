@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,6 +9,7 @@ public class Cell : MonoBehaviour
     [HideInInspector]
     public BoxCollider TriggerBox;
     public GameObject[] Exits;
+    public GameManager.CellType cellType;
 
     private void Awake()
     {
