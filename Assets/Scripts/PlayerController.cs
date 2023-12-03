@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     private GameObject playerMesh;
     [SerializeField]
     private Transform firePoint;
-    private FireBaseScript fireAnimController;
+    private FireController fireAnimController;
 
 
     //Singletone
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         pCamera = Camera.main;
-        fireAnimController = GetComponentInChildren<FireBaseScript>();
+        fireAnimController = GetComponentInChildren<FireController>();
 
         //Initialize
         FPSMode = false;
@@ -160,7 +160,7 @@ public class PlayerController : MonoBehaviour
         if (fireInput && isGrounded && !isJumping)
         {
             isFiring = true;
-            fireAnimController.Duration = 1;
+            fireAnimController.Fire();
         }
         else
         {
@@ -216,15 +216,17 @@ public class PlayerController : MonoBehaviour
     public void SwitchToTPS()
     {
         FPSMode = false;
-        playerMesh.SetActive(true);
+        //playerMesh.SetActive(true);
         CameraHolder.instance.SwitchToTPS();
+        HudController.instance.SwitchToTPS();
     }
 
     public void SwitchToFPS()
     {
         FPSMode = true;
-        playerMesh.SetActive(false);
+        //playerMesh.SetActive(false);
         CameraHolder.instance.SwitchToFPS();
+        HudController.instance.SwitchToFPS();
     }
 
     #endregion

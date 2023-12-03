@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public float sensY;
     private float xRotation;
     private float yRotation;
+    private bool FPSMode;
 
     private void Update()
     {
@@ -19,7 +20,14 @@ public class CameraController : MonoBehaviour
 
         yRotation += mouseX;
         xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -45f, 45f);
+        if (FPSMode)
+        {
+            xRotation = Mathf.Clamp(xRotation, -30f, 22f);
+        }
+        else
+        {
+            xRotation = Mathf.Clamp(xRotation, 0f, 45f);
+        }
 
         //Rotate camera and orientations smoothly
         Quaternion targetXRotation = Quaternion.Euler(xRotation, yRotation, 0);
@@ -34,10 +42,12 @@ public class CameraController : MonoBehaviour
 
     public void SwitchToTPS() {
         transform.localPosition = new Vector3(0.75f, 0.7f, -1.5f);
+        FPSMode = false;
     }
 
     public void SwitchToFPS()
     {
-        transform.localPosition = new Vector3(0f, 0f, 0f);
+        transform.localPosition = new Vector3(0.1f, 0f, 0.1f);
+        FPSMode = true;
     }
 }

@@ -11,6 +11,9 @@ public class CameraHolder : MonoBehaviour
     private Transform currentTransform;
     private CameraController mainCamera;
 
+    private bool FPSMode;
+    private Vector3 FPSOffset;
+
     //Singleton
     public static CameraHolder instance;
 
@@ -18,23 +21,34 @@ public class CameraHolder : MonoBehaviour
     {
         instance = this;
         mainCamera = GetComponentInChildren<CameraController>();
+        FPSOffset = new Vector3(0f, 0f, 0f);
         SwitchToTPS();
     }
 
     private void Update()
     {
         //Follow the player;
-        transform.position = currentTransform.position;
+        if (FPSMode)
+        {
+            transform.position = currentTransform.position + FPSOffset;
+        }
+        else
+        {
+            transform.position = currentTransform.position;
+        }
+        
     }
 
     public void SwitchToFPS()
     {
+        FPSMode = true;
         currentTransform = FPSAnchor;
         mainCamera.SwitchToFPS();
     }
 
     public void SwitchToTPS()
     {
+        FPSMode = false;
         currentTransform = TPSAnchor;
         mainCamera.SwitchToTPS();
     }
