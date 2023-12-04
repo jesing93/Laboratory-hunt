@@ -9436,7 +9436,7 @@ GameObject:
   - component: {fileID: 9095052066994542075}
   - component: {fileID: 292504013526730269}
   - component: {fileID: 272618749640789825}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Flamethrower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9624,9 +9624,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 292504013526730269}
-  startTime: 1
+  startTime: 0.25
   stopTime: 1
-  duration: 2
+  duration: 0.5
 --- !u!1 &7819617785061089124
 GameObject:
   m_ObjectHideFlags: 0

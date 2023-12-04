@@ -15,9 +15,9 @@ TagManager:
   - UI
   - Cells
   - FireLayer
-  - 
-  - 
-  - 
+  - GroundDetection
+  - Player
+  - Enemy
   - 
   - 
   - 

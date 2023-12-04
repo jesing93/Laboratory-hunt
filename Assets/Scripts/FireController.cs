@@ -29,6 +29,8 @@ public class FireController : MonoBehaviour
     private Transform anchor;
     private bool isFiring;
 
+    private Coroutine cleanupCorroutine;
+
     public bool Starting { get; private set; }
     public float StartPercent { get; private set; }
     public bool Stopping { get; private set; }
@@ -113,7 +115,7 @@ public class FireController : MonoBehaviour
     /// </summary>
     public void Fire()
     {
-        duration = 1.0f;
+        duration = 0.5f;
         //If wasn't firing start effects
         if (!isFiring)
         {
@@ -122,6 +124,10 @@ public class FireController : MonoBehaviour
             stopTimeIncrement = 0;
             StartParticleSystems();
             audioSource.Play();
+            if (cleanupCorroutine != null)
+            {
+                StopCoroutine(cleanupCorroutine);
+            }
         }
     }
 
@@ -131,7 +137,6 @@ public class FireController : MonoBehaviour
     public virtual void Stop()
     {
         isFiring = false;
-        audioSource.Stop();
         if (Stopping)
         {
             return;
@@ -144,13 +149,14 @@ public class FireController : MonoBehaviour
             p.Stop();
         }
 
-        StartCoroutine(CleanupEverythingCoRoutine());
+        cleanupCorroutine = StartCoroutine(CleanupEverythingCoRoutine());
     }
     private IEnumerator CleanupEverythingCoRoutine()
     {
         // 2 extra seconds just to make sure animation and graphics have finished ending
         yield return new WaitForSeconds(stopTime + 2.0f);
 
+        audioSource.Stop();
         if (!isFiring)
         {
             foreach (ParticleSystem p in gameObject.GetComponentsInChildren<ParticleSystem>())

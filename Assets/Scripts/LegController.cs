@@ -44,11 +44,13 @@ public class LegController : MonoBehaviour
 
     public Color myColor;
 
-    //private LayerMask groundLayer;
+    private LayerMask groundLayer;
+    private LayerMask defaultLayer;
 
     private void Awake()
     {
-        //groundLayer = LayerMask.NameToLayer("Cells");
+        groundLayer = LayerMask.GetMask("Cells");
+        defaultLayer = LayerMask.GetMask("Default");
     }
 
     public void Initialize(Vector3 footPosition, int legResolution, float maxLegDistance, float growCoef, MimicController myMimic, float lifeTime)
@@ -77,7 +79,7 @@ public class LegController : MonoBehaviour
         // is a bit offset for every leg part
         Vector2 footOffset = Random.insideUnitCircle.normalized * finalFootDistance;
         RaycastHit hit;
-        Physics.Raycast(footPosition + Vector3.up * 5f + new Vector3(footOffset.x, 0, footOffset.y), -Vector3.up, out hit);
+        Physics.Raycast(footPosition + Vector3.up * 5f + new Vector3(footOffset.x, 0, footOffset.y), -Vector3.up, out hit, 100, groundLayer | defaultLayer);
         handles[7] = hit.point;
 
         legHeight = Random.Range(legMinHeight, legMaxHeight);
@@ -120,7 +122,7 @@ public class LegController : MonoBehaviour
         {
             // Check is the body is in line of sight from the foot position, and initiates the retractation if it isn't
             RaycastHit hit;
-            if (Physics.Linecast(footPosition, transform.position, out hit))
+            if (Physics.Linecast(footPosition, transform.position, out hit, groundLayer | defaultLayer))
             {
                 growTarget = 0;
             }

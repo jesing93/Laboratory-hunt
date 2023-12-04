@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
         xRotation -= mouseY;
         if (FPSMode)
         {
-            xRotation = Mathf.Clamp(xRotation, -30f, 22f);
+            xRotation = Mathf.Clamp(xRotation, -30f, 23f);
         }
         else
         {

@@ -31,7 +31,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -64,7 +64,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 43a2faec583568c4e8e790ad05f719b3, type: 2}
+  - {fileID: 2100000, guid: ebe982251cf77ea43a67196397dd9b88, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -192,7 +192,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 47a6edb0cd30c914b833aba5544e52d1, type: 2}
+  - {fileID: 2100000, guid: ebe982251cf77ea43a67196397dd9b88, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -232,21 +232,21 @@ MonoBehaviour:
   legResolution: 0
   legLine: {fileID: 0}
   handlesCount: 8
-  legMinHeight: 0.6
-  legMaxHeight: 1.2
+  legMinHeight: 0.4
+  legMaxHeight: 0.6
   handles: []
-  handleOffsetMinRadius: 2
-  handleOffsetMaxRadius: 0.65
+  handleOffsetMinRadius: 0.6
+  handleOffsetMaxRadius: 0.3
   handleOffsets: []
   finalFootDistance: 0.35
   growCoef: 3
   growTarget: 1
   progression: 0
   minDuration: 0.5
-  rotationSpeed: 180
+  rotationSpeed: 90
   minRotSpeed: 15
-  maxRotSpeed: 150
+  maxRotSpeed: 120
   oscillationSpeed: 0
   minOscillationSpeed: 20
-  maxOscillationSpeed: 100
+  maxOscillationSpeed: 80
   myColor: {r: 0, g: 0, b: 0, a: 0}

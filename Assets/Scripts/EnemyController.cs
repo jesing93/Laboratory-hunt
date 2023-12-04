@@ -9,10 +9,12 @@ public class EnemyController : MonoBehaviour
     [Header("Movement")]
     [Tooltip("Body Height from ground")]
     [Range(0.5f, 5f)]
-    private float height = 0.8f;
+    private float height = 0.4f;
     private float speed = 5f;
     Vector3 velocity = Vector3.zero;
     private float velocityLerpCoef = 4f;
+
+    //Components
     private MimicController myMimic;
 
     //Vars
@@ -24,10 +26,16 @@ public class EnemyController : MonoBehaviour
     private int growStage;
     private bool isAlive;
 
+    private LayerMask groundLayer;
+    private LayerMask defaultLayer;
+
     private void Awake()
     {
         //Components
         myMimic = GetComponent<MimicController>();
+
+        groundLayer = LayerMask.GetMask("Cells");
+        defaultLayer = LayerMask.GetMask("Default");
 
         //Initialize
         isAlive = true;
@@ -56,7 +64,7 @@ public class EnemyController : MonoBehaviour
         transform.position = transform.position + velocity * Time.deltaTime;
         RaycastHit hit;
         Vector3 destHeight = transform.position;
-        if (Physics.Raycast(transform.position + Vector3.up * 5f, -Vector3.up, out hit))
+        if (Physics.Raycast(transform.position + Vector3.up, -Vector3.up, out hit, 100, groundLayer | defaultLayer))
             destHeight = new Vector3(transform.position.x, hit.point.y + height, transform.position.z);
         transform.position = Vector3.Lerp(transform.position, destHeight, velocityLerpCoef * Time.deltaTime);
     }
@@ -80,7 +88,7 @@ public class EnemyController : MonoBehaviour
             }
             else if (currentHealth < maxHealth)
             {
-                currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * 2, 0, maxHealth);
+                currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * 2 * growStage, 0, maxHealth);
                 Debug.Log("Healing!");
             }
         }
@@ -95,18 +103,29 @@ public class EnemyController : MonoBehaviour
     private void HandleGowth()
     {
         timeAlive += Time.deltaTime;
-        if (timeAlive > growStage * 30)
+        if (growStage < 3 && timeAlive > growStage * 10)
         {
             growStage++;
             maxHealth = 50 * growStage;
+            //Grow phisical params
+            myMimic.newLegRadius = growStage;
+            myMimic.minLegDistance = growStage;
+            myMimic.partsPerLeg = growStage + 1;
+            height = 0.3f * growStage;
+            myMimic.ResetMimic();
         }
     }
 
     private void OnParticleCollision(GameObject other)
     {
+        Debug.Log("Particle!");
         if (other.CompareTag("Fire"))
         {
             takingFireDelay = 1f;
         }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Enemy coll");
     }
 }

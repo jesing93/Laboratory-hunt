@@ -2,9 +2,7 @@ using DigitalRuby.PyroParticles;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,7 +24,6 @@ public class PlayerController : MonoBehaviour
     private bool fireInput;
 
     private Vector3 direction;
-    private Vector3 currentMovementInput;
     private Vector3 currentMovement;
     private Vector3 currentRunMovement;
 

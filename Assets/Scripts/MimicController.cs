@@ -52,11 +52,13 @@ public class MimicController : MonoBehaviour
     [Tooltip("This must be updates as the Mimin moves to assure great leg placement")]
     public Vector3 velocity;
 
-    //private LayerMask groundLayer;
+    private LayerMask groundLayer;
+    private LayerMask defaultLayer;
 
     private void Awake()
     {
-        //groundLayer = LayerMask.NameToLayer("Cells");
+        groundLayer = LayerMask.GetMask("Cells");
+        defaultLayer = LayerMask.GetMask("Default");
     }
 
     void Start()
@@ -69,7 +71,7 @@ public class MimicController : MonoBehaviour
         ResetMimic();
     }
 
-    private void ResetMimic()
+    public void ResetMimic()
     {
         foreach (LegController g in GameObject.FindObjectsOfType<LegController>())
         {
@@ -129,9 +131,9 @@ public class MimicController : MonoBehaviour
                 newLegPosition = transform.position + ((newLegPosition - transform.position) + velocity.normalized * (newLegPosition - transform.position).magnitude) / 2f;
 
             RaycastHit hit;
-            Physics.Raycast(newLegPosition + Vector3.up * 10f, -Vector3.up, out hit);
+            Physics.Raycast(newLegPosition + Vector3.up, -Vector3.up, out hit, 100, groundLayer | defaultLayer);
             Vector3 myHit = hit.point;
-            if (Physics.Linecast(transform.position, hit.point, out hit))
+            if (Physics.Linecast(transform.position, hit.point, out hit, groundLayer | defaultLayer))
                 myHit = hit.point;
 
             float lifeTime = Random.Range(minLegLifetime, maxLegLifetime);
