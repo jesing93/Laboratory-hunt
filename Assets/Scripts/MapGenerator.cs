@@ -132,6 +132,7 @@ public class MapGenerator : MonoBehaviour
         }
 
         Debug.Log("Finished " + Time.time);
+        GameManager.instance.StartGame();
     }
 
     /// <summary>

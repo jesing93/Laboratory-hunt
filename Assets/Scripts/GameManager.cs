@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,7 +42,7 @@ public class GameManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0;
         MenuController.instance.Pause();
-        CameraController.instance.isPaused = true;
+        CameraController.instance.togglePause();
     }
 
     private void Unpause()
@@ -49,14 +50,14 @@ public class GameManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1.0f;
         MenuController.instance.OnContinue();
-        CameraController.instance.isPaused = false;
+        CameraController.instance.togglePause();
     }
 
     public void StartGame()
     {
         isGameStarted = true;
         PlayerController.instance.StartGame();
-        CameraController.instance.isPaused = false;
+        CameraController.instance.togglePause();
     }
 
     public void EndGame(bool isVictory)
@@ -64,7 +65,7 @@ public class GameManager : MonoBehaviour
         isGameEnded = true;
         Time.timeScale = 0;
         MenuController.instance.EndGame(isVictory);
-        CameraController.instance.isPaused = true;
+        CameraController.instance.togglePause();
     }
 
     public void InitializePlayer(Vector3 initPos)

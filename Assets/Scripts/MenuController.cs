@@ -10,6 +10,8 @@ public class MenuController : MonoBehaviour
 
     //Components
     [SerializeField]
+    private GameObject canvas;
+    [SerializeField]
     private GameObject pausePanel;
     [SerializeField]
     private GameObject endgamePanel;
@@ -50,19 +52,19 @@ public class MenuController : MonoBehaviour
 
     public void Pause ()
     {
-        this.gameObject.SetActive(true);
+        canvas.SetActive(true);
         pausePanel.SetActive(true);
     }
 
     public void Unpause ()
     {
         pausePanel.SetActive(false);
-        this.gameObject.SetActive(false);
+        canvas.SetActive(false);
     }
 
     public void EndGame(bool isVictory)
     {
-        this.gameObject.SetActive(true);
+        canvas.SetActive(true);
         endgamePanel.SetActive(true);
         if (isVictory)
         {

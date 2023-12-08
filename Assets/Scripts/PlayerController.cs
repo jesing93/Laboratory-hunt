@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        isGameStarted = true; //TODO: Delete once gameflow is finished
+        //isGameStarted = true; //TODO: Delete once gameflow is finished
     }
 
     private void Update()

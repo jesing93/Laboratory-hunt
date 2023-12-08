@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
     private float xRotation;
     private float yRotation;
     private bool FPSMode;
-    public bool isPaused = true;
+    private bool isPaused = true;
 
     //Singletone
     public static CameraController instance;
@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        isPaused = false; //TODO: Delete once gameflow is finished
+        //isPaused = false; //TODO: Delete once gameflow is finished
     }
 
     private void Update()
@@ -48,24 +48,23 @@ public class CameraController : MonoBehaviour
             {
                 xRotation = Mathf.Clamp(xRotation, 0f, 45f);
             }
+            //Normalize yRotation
+            if (yRotation > 360)
+            {
+                yRotation -= 360;
+            }
+            else if (yRotation < 0)
+            {
+                yRotation += 360;
+            }
 
             //Rotate camera vertically and orientations smoothly
             Quaternion targetXRotation = Quaternion.Euler(xRotation, yRotation, 0);
             transform.parent.rotation = Quaternion.Lerp(transform.parent.rotation, targetXRotation, Time.deltaTime * 10);
 
             //Rotation smoothness
-            float yDegrees = PlayerController.instance.Orientation.rotation.y + yRotation;
-            if (yDegrees > 360)
-            {
-                yDegrees -= 360;
-            }
-            else if (yDegrees < 0)
-            {
-                yDegrees += 360;
-            }
-            Vector3 targetYRotation = new(0, yDegrees, 0);
-
-            //Rotate the player horizontally instead of the camera
+            Vector3 targetYRotation = new(0, yRotation, 0);
+            //Rotate the player horizontally instead of the camera;
             PlayerController.instance.Orientation.DORotate(targetYRotation, rotDelay, RotateMode.Fast);
         }
     }
@@ -81,5 +80,10 @@ public class CameraController : MonoBehaviour
         transform.localPosition = new Vector3(0.1f, 0f, 0.1f);
         rotDelay = 0f;
         FPSMode = true;
+    }
+
+    public void togglePause()
+    {
+        isPaused = !isPaused;
     }
 }
