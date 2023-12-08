@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bb6c79c0019f734082227709775f829, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPref: {fileID: 5119094872944303944, guid: 983cd758023202b439200b55b2d5b659, type: 3}
 --- !u!4 &54905316
 Transform:
   m_ObjectHideFlags: 0
@@ -625,7 +626,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You wasn't able to stop the dangerous specimen, the world is over
+  m_text: You weren't able to stop the dangerous specimen, humanity is over
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e137cef5748f22d42ab9528799f47596, type: 2}
   m_sharedMaterial: {fileID: -3978065091901363755, guid: e137cef5748f22d42ab9528799f47596, type: 2}

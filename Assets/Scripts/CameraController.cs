@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,46 +9,77 @@ public class CameraController : MonoBehaviour
     [Header("Camera sensibility")]
     public float sensX;
     public float sensY;
+    private float rotDelay = 0.2f;
     private float xRotation;
     private float yRotation;
     private bool FPSMode;
+    public bool isPaused = true;
 
-    private void FixedUpdate()
+    //Singletone
+    public static CameraController instance;
+
+    private void Awake()
     {
+        instance = this;
+        isPaused = false; //TODO: Delete once gameflow is finished
+    }
+
+    private void Update()
+    {
+        float mouseX = 0;
+        float mouseY = 0;
+
         //Get inputs
-        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
-
-        yRotation += mouseX;
-        xRotation -= mouseY;
-        if (FPSMode)
+        if (!isPaused)
         {
-            xRotation = Mathf.Clamp(xRotation, -30f, 23f);
+            mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
+            mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+            yRotation += mouseX;
+            xRotation -= mouseY;
+            if (FPSMode)
+            {
+                xRotation = Mathf.Clamp(xRotation, -30f, 23f);
+
+                //Rotate the player horizontally instead of the camera
+                //PlayerController.instance.Orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+            }
+            else
+            {
+                xRotation = Mathf.Clamp(xRotation, 0f, 45f);
+            }
+
+            //Rotate camera vertically and orientations smoothly
+            Quaternion targetXRotation = Quaternion.Euler(xRotation, yRotation, 0);
+            transform.parent.rotation = Quaternion.Lerp(transform.parent.rotation, targetXRotation, Time.deltaTime * 10);
+
+            //Rotation smoothness
+            float yDegrees = PlayerController.instance.Orientation.rotation.y + yRotation;
+            if (yDegrees > 360)
+            {
+                yDegrees -= 360;
+            }
+            else if (yDegrees < 0)
+            {
+                yDegrees += 360;
+            }
+            Vector3 targetYRotation = new(0, yDegrees, 0);
+
+            //Rotate the player horizontally instead of the camera
+            PlayerController.instance.Orientation.DORotate(targetYRotation, rotDelay, RotateMode.Fast);
         }
-        else
-        {
-            xRotation = Mathf.Clamp(xRotation, 0f, 45f);
-        }
-
-        //Rotate camera and orientations smoothly
-        Quaternion targetXRotation = Quaternion.Euler(xRotation, yRotation, 0);
-        transform.parent.rotation = Quaternion.Lerp(transform.parent.rotation, targetXRotation, Time.deltaTime * 10);
-
-        //Quaternion targetYRotation = Quaternion.Euler(0, yRotation, 0);
-        //PlayerController.instance.Orientation.rotation = Quaternion.Lerp(PlayerController.instance.Orientation.rotation, targetYRotation, Time.deltaTime * 5);
-
-        //Rotate the player instead of the camera
-        PlayerController.instance.Orientation.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     public void SwitchToTPS() {
         transform.localPosition = new Vector3(0.75f, 0.7f, -1.5f);
+        rotDelay = 0.2f;
         FPSMode = false;
     }
 
     public void SwitchToFPS()
     {
         transform.localPosition = new Vector3(0.1f, 0f, 0.1f);
+        rotDelay = 0f;
         FPSMode = true;
     }
 }

@@ -30,6 +30,8 @@ public class MapGenerator : MonoBehaviour
         Cell StartRoom = Instantiate(CellRoomPrefabs[Random.Range(0, CellRoomPrefabs.Count)], Vector3.zero, Quaternion.identity);
         for (int i = 0; i < StartRoom.Exits.Length; i++) CreatedExits.Add(StartRoom.Exits[i].transform);
         StartRoom.TriggerBox.enabled = true;
+        Vector3 playerStartPos = StartRoom.transform.position + StartRoom.GetComponent<BoxCollider>().bounds.center;
+        GameManager.instance.InitializePlayer(playerStartPos);
 
         //Set a limit to avoid infinite loop
         int limit = 1000, roomsLeft = RoomCount - 1;

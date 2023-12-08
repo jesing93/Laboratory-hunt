@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        isGameStarted = true; //TODO: Delete once gameflow is finished
     }
 
     private void Update()
@@ -134,7 +135,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PlayerInputs()
     {
-        if (!isDead && isGameStarted)
+        if (!isDead && isGameStarted && Time.timeScale > 0)
         {
             //Get Imputs
             hInput = Input.GetAxisRaw("Horizontal");

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     private bool isPaused;
     private bool isGameStarted;
     private bool isGameEnded;
+    [SerializeField]
+    private GameObject playerPref;
 
     public bool IsPaused { get => isPaused; }
     public bool GameStarted { get => isGameStarted; }
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0;
         MenuController.instance.Pause();
+        CameraController.instance.isPaused = true;
     }
 
     private void Unpause()
@@ -46,12 +49,14 @@ public class GameManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1.0f;
         MenuController.instance.OnContinue();
+        CameraController.instance.isPaused = false;
     }
 
     public void StartGame()
     {
         isGameStarted = true;
         PlayerController.instance.StartGame();
+        CameraController.instance.isPaused = false;
     }
 
     public void EndGame(bool isVictory)
@@ -59,6 +64,12 @@ public class GameManager : MonoBehaviour
         isGameEnded = true;
         Time.timeScale = 0;
         MenuController.instance.EndGame(isVictory);
+        CameraController.instance.isPaused = true;
+    }
+
+    public void InitializePlayer(Vector3 initPos)
+    {
+        Instantiate(playerPref, initPos, Quaternion.identity);
     }
 
     //CellTypeEnum for avoid multiple corridors together
