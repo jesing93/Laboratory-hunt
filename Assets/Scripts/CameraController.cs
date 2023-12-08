@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     private float yRotation;
     private bool FPSMode;
 
-    private void Update()
+    private void FixedUpdate()
     {
         //Get inputs
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;

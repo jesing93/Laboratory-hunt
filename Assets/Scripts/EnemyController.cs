@@ -78,18 +78,15 @@ public class EnemyController : MonoBehaviour
                 takingFireDelay -= Time.deltaTime;
                 currentHealth -= Time.deltaTime * 10;
                 onFireDelay = 2f;
-                Debug.Log("Taking fire!");
             }
             else if (onFireDelay > 0)
             {
                 onFireDelay -= Time.deltaTime;
                 currentHealth -= Time.deltaTime * 5;
-                Debug.Log("Burning!");
             }
             else if (currentHealth < maxHealth)
             {
                 currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * 2 * growStage, 0, maxHealth);
-                Debug.Log("Healing!");
             }
         }
         else
@@ -118,14 +115,9 @@ public class EnemyController : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-        Debug.Log("Particle!");
         if (other.CompareTag("Fire"))
         {
             takingFireDelay = 1f;
         }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Enemy coll");
     }
 }

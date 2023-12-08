@@ -25,7 +25,7 @@ public class CameraHolder : MonoBehaviour
         SwitchToTPS();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         //Follow the player;
         if (FPSMode)
