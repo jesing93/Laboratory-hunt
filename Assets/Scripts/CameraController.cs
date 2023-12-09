@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
             //Rotation smoothness
             Vector3 targetYRotation = new(0, yRotation, 0);
             //Rotate the player horizontally instead of the camera;
-            PlayerController.instance.Orientation.DORotate(targetYRotation, rotDelay, RotateMode.Fast);
+            PlayerController.instance.Orientation.DORotate(targetYRotation, rotDelay, RotateMode.Fast).SetId("CamRot");
         }
     }
 
@@ -82,8 +82,8 @@ public class CameraController : MonoBehaviour
         FPSMode = true;
     }
 
-    public void togglePause()
+    public void TogglePause(bool state)
     {
-        isPaused = !isPaused;
+        isPaused = state;
     }
 }

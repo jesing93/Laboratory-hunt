@@ -40,32 +40,34 @@ public class GameManager : MonoBehaviour
     private void Pause()
     {
         isPaused = true;
-        Time.timeScale = 0;
         MenuController.instance.Pause();
-        CameraController.instance.togglePause();
+        CameraController.instance.TogglePause(isPaused);
+        DOTween.Kill("CamRot", false);
+        Time.timeScale = 0;
     }
 
     private void Unpause()
     {
         isPaused = false;
-        Time.timeScale = 1.0f;
         MenuController.instance.OnContinue();
-        CameraController.instance.togglePause();
+        CameraController.instance.TogglePause(isPaused);
+        Time.timeScale = 1.0f;
     }
 
     public void StartGame()
     {
         isGameStarted = true;
         PlayerController.instance.StartGame();
-        CameraController.instance.togglePause();
+        CameraController.instance.TogglePause(isPaused);
     }
 
     public void EndGame(bool isVictory)
     {
         isGameEnded = true;
-        Time.timeScale = 0;
         MenuController.instance.EndGame(isVictory);
-        CameraController.instance.togglePause();
+        CameraController.instance.TogglePause(isGameEnded);
+        DOTween.Kill("CamRot", false);
+        Time.timeScale = 0;
     }
 
     public void InitializePlayer(Vector3 initPos)

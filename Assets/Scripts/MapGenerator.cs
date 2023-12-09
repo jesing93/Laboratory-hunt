@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -13,6 +14,19 @@ public class MapGenerator : MonoBehaviour
     public GameObject[] DoorPrefabs;
     public List<Cell> CellRoomPrefabs;
     public List<Cell> CellCorridorPrefabs;
+
+    private GameManager.CellType currentType;
+    private List<Cell> generatedRooms;
+
+    //Components
+    private NavMeshSurface navSurface;
+    [SerializeField]
+    private GameObject mimicPref;
+
+    private void Awake()
+    {
+        navSurface = GetComponentInChildren<NavMeshSurface>();
+    }
 
     private void Start()
     {
@@ -50,10 +64,12 @@ public class MapGenerator : MonoBehaviour
             if (createdExit.GetComponentInParent<Cell>().cellType == GameManager.CellType.Room)
             {
                 shuffledCells = ShuffleCellList(CellCorridorPrefabs);
+                currentType = GameManager.CellType.Corridor;
             }
             else
             {
                 shuffledCells = ShuffleCellList(CellRoomPrefabs);
+                currentType = GameManager.CellType.Room;
             }
 
             //Try each prefab to get one that have enough space
@@ -99,6 +115,11 @@ public class MapGenerator : MonoBehaviour
                         //Destroy the doorways
                         DestroyImmediate(createdExit.gameObject);
                         DestroyImmediate(selectedExit.gameObject);
+                        //Add prefab to the list of rooms if type = room
+                        if(currentType == GameManager.CellType.Room)
+                        {
+                            generatedRooms.Add(selectedPrefab);//TODO: Fix error
+                        }
                         //Stop searching for this prefab
                         break;
                     }
@@ -131,6 +152,12 @@ public class MapGenerator : MonoBehaviour
             DestroyImmediate(CreatedExits[i].gameObject);
         }
 
+        navSurface.BuildNavMesh();
+        for (int i = Mathf.FloorToInt(RoomCount / 5); i > 0; i--)
+        {
+            int pickedRoom = Random.Range(0, generatedRooms.Count - 1);
+            Instantiate(mimicPref, generatedRooms[pickedRoom].transform.position + generatedRooms[pickedRoom].GetComponent<BoxCollider>().bounds.center, Quaternion.identity);
+        }
         Debug.Log("Finished " + Time.time);
         GameManager.instance.StartGame();
     }

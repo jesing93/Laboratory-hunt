@@ -1,11 +1,12 @@
 using MimicSpace;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Animations;
 
 public class EnemyController : MonoBehaviour
 {
+    #region parameters
+
     [Header("Movement")]
     [Tooltip("Body Height from ground")]
     [Range(0.5f, 5f)]
@@ -16,6 +17,10 @@ public class EnemyController : MonoBehaviour
 
     //Components
     private MimicController myMimic;
+    private NavMeshAgent navAgent;
+    private StateMachine brain;
+    [SerializeField]
+    private GameObject eggPref;
 
     //Vars
     private float takingFireDelay;
@@ -25,78 +30,173 @@ public class EnemyController : MonoBehaviour
     private float timeAlive;
     private int growStage;
     private bool isAlive;
+    private bool playerInSight;
+    private float lastPlayerSight;
+    private float roamRange = 100f;
+    private int remainingEggs = 2;
+    private float eggDelay;
+    private float attackTimer = 2f;
 
     private LayerMask groundLayer;
-    private LayerMask defaultLayer;
+    private LayerMask playerLayer;
+
+    #endregion
+    #region methods
 
     private void Awake()
     {
         //Components
-        myMimic = GetComponent<MimicController>();
+        myMimic = GetComponentInChildren<MimicController>();
+        navAgent = GetComponent<NavMeshAgent>();
 
         groundLayer = LayerMask.GetMask("Cells");
-        defaultLayer = LayerMask.GetMask("Default");
+        playerLayer = LayerMask.GetMask("Player");
 
         //Initialize
         isAlive = true;
         currentHealth = maxHealth = 50;
         timeAlive = 0;
         growStage = 1;
+
+        brain = GetComponent<StateMachine>();
+    }
+
+    private void Start()
+    {
+        brain.PushState(OnRoam, OnRoamEnter, OnRoamExit);
     }
 
     private void Update()
     {
         if (isAlive)
         {
-            HandleMovement();
+            // Assigning velocity to the mimic to assure great leg placement
+            myMimic.velocity = navAgent.velocity;
+
+            HandleSight();
             HandleGowth();
             HandleLife();
         }
     }
 
-    private void HandleMovement()
+    /// <summary>
+    /// Detect if the player is in the line of sight
+    /// </summary>
+    private void HandleSight()
     {
-        velocity = Vector3.Lerp(velocity, new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized * speed, velocityLerpCoef * Time.deltaTime);
-
-        // Assigning velocity to the mimic to assure great leg placement
-        myMimic.velocity = velocity;
-
-        transform.position = transform.position + velocity * Time.deltaTime;
+        //playerDistance = Vector3.Distance(transform.position, PlayerController.instance.transform.position);
+        Ray ray = new(transform.position, PlayerController.instance.transform.position - transform.position);
         RaycastHit hit;
-        Vector3 destHeight = transform.position;
-        if (Physics.Raycast(transform.position + Vector3.up, -Vector3.up, out hit, 100, groundLayer | defaultLayer))
-            destHeight = new Vector3(transform.position.x, hit.point.y + height, transform.position.z);
-        transform.position = Vector3.Lerp(transform.position, destHeight, velocityLerpCoef * Time.deltaTime);
+        if(Physics.Raycast(ray, out hit, 5f, groundLayer | playerLayer))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                playerInSight = true;
+                //Set last sight time + sight delay
+                lastPlayerSight = Time.time +  3f;
+            }else
+            {
+                playerInSight = false;
+            }
+        }
+        else
+        {
+            playerInSight = false;
+        }
+    }
+
+    /// <summary>
+    /// Handle the generic roam behaviour
+    /// </summary>
+    private void HandleRoam()
+    {
+        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+        {
+            Vector3 point;
+            if (RandomPoint(transform.position, roamRange, false, out point))
+            {
+                Debug.DrawRay(point, Vector3.up, Color.red, 2f);
+                navAgent.SetDestination(point);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Generate a random reachable point in radius
+    /// </summary>
+    /// <param name="center">The center of the search</param>
+    /// <param name="range">The max distance in Unity units</param>
+    /// <param name="scape">True if the point should be far from here, minimum distance = range/2</param>
+    /// <param name="result">The resulting vector3, current position if none was found</param>
+    /// <returns></returns>
+    private bool RandomPoint(Vector3 center, float range, bool scape, out Vector3 result)
+    {
+        //Counter to avoid infinite loop
+        int failN = 0;
+        Vector3 spherePoint = Vector3.zero;
+        while (true)
+        {
+            if(scape)
+            {
+                //Random point with minimum distance
+                spherePoint = new(Random.Range(0.5f, 1f) * Random.Range(0, 2) * 2 - 1, Random.Range(0.5f, 1f) * Random.Range(0, 2) * 2 - 1, Random.Range(0.5f, 1f) * Random.Range(0, 2) * 2 - 1);
+            }
+            else
+            {
+                //Random point
+                spherePoint = Random.insideUnitSphere;
+            }
+            Vector3 randomPoint = center + spherePoint * range;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+            {
+                //If valid point, return
+                result = hit.position;
+                return true;
+            }
+            failN++;
+            if (failN > 10)
+            {
+                //If too many invalid points, return empty
+                result = center;
+                return false;
+            }
+        }
     }
 
     private void HandleLife()
     {
+        //If alive
         if (currentHealth > 0)
         {
-            if (takingFireDelay > 0)
+            if (takingFireDelay > 0) //If touching fire
             {
                 takingFireDelay -= Time.deltaTime;
                 currentHealth -= Time.deltaTime * 10;
                 onFireDelay = 2f;
             }
-            else if (onFireDelay > 0)
+            else if (onFireDelay > 0) //If burning
             {
                 onFireDelay -= Time.deltaTime;
                 currentHealth -= Time.deltaTime * 5;
             }
-            else if (currentHealth < maxHealth)
+            else if (currentHealth < maxHealth) //If not being damaged and not full health
             {
                 currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * 2 * growStage, 0, maxHealth);
             }
         }
-        else
+        else //Death event
         {
             isAlive = false;
+            Destroy(brain);
             //TODO: Handle enemy death
             Debug.Log("Die!");
         }
     }
 
+    /// <summary>
+    /// Handle the growth once enougth time alive
+    /// </summary>
     private void HandleGowth()
     {
         timeAlive += Time.deltaTime;
@@ -105,6 +205,7 @@ public class EnemyController : MonoBehaviour
             growStage++;
             maxHealth = 50 * growStage;
             //Grow phisical params
+            //TODO: Improve growing
             myMimic.newLegRadius = growStage;
             myMimic.minLegDistance = growStage;
             myMimic.partsPerLeg = growStage + 1;
@@ -113,6 +214,23 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handle the placement of eggs
+    /// </summary>
+    private void HandleLayEgg()
+    {
+        if(eggDelay < Time.time)
+        {
+            remainingEggs--;
+            eggDelay = Time.time + 10f;
+            Instantiate(eggPref, transform.position, transform.rotation);
+        }
+    }
+
+    /// <summary>
+    /// Handle particle collision with fire particles
+    /// </summary>
+    /// <param name="other"></param>
     private void OnParticleCollision(GameObject other)
     {
         if (other.CompareTag("Fire"))
@@ -120,4 +238,193 @@ public class EnemyController : MonoBehaviour
             takingFireDelay = 1f;
         }
     }
+
+    #endregion
+
+    #region states
+
+    private void OnRoamEnter()
+    {
+        navAgent.ResetPath();
+    }
+
+    /// <summary>
+    /// Generic roaming function for every growth stage
+    /// </summary>
+    private void OnRoam()
+    {
+        switch (growStage)
+        {
+            case 1:
+                if (playerInSight)
+                {
+                    brain.PushState(OnRunAway, null, null);
+                }
+                else
+                {
+                    HandleRoam();
+                }
+                break;
+            case 2:
+                if (playerInSight)
+                {
+                    brain.PushState(OnRunAway, null, null);
+                } else
+                {
+                    if(remainingEggs > 0)
+                    {
+                        brain.PushState(OnLayEggs, null, null);
+                    }
+                    else
+                    {
+                        HandleRoam();
+                    }
+                }
+                break;
+            case 3:
+                if (playerInSight)
+                {
+                    brain.PushState(OnChase, OnChaseEnter, OnChaseExit);
+                }
+                else
+                {
+                    if (remainingEggs > 0)
+                    {
+                        brain.PushState(OnLayEggs, null, null);
+                    }
+                    else
+                    {
+                        HandleRoam();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void OnRoamExit()
+    {
+
+    }
+
+    /// <summary>
+    /// Simmilar to roaming but running to a far point
+    /// </summary>
+    private void OnRunAway()
+    {
+        if (!playerInSight && lastPlayerSight <= Time.time)
+        {
+            brain.PopState();
+        }
+        else 
+        {
+            if (navAgent.remainingDistance <= navAgent.stoppingDistance)
+            {
+                Vector3 point;
+                if (RandomPoint(transform.position, roamRange, true, out point))
+                {
+                    Debug.DrawRay(point, Vector3.up, Color.red, 2f);
+                    navAgent.SetDestination(point);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Roaming while searching for places to place eggs
+    /// </summary>
+    private void OnLayEggs()
+    {
+        if (playerInSight)
+        {
+            brain.PushState(OnRunAway, null, null);
+        }
+        else
+        {
+            HandleRoam();
+            if (remainingEggs == 0)
+            {
+                brain.PopState();
+            }
+            else
+            {
+                Ray rayF = new(transform.position, transform.forward);
+                Ray rayR = new(transform.position, transform.right);
+                Ray rayL = new(transform.position, -transform.right);
+                RaycastHit hit;
+                int hitCounts = 0;
+                if (Physics.Raycast(rayF, out hit, 1f, groundLayer))
+                {
+                    hitCounts++;
+                }
+                if (Physics.Raycast(rayR, out hit, 1f, groundLayer))
+                {
+                    hitCounts++;
+                }
+                if (Physics.Raycast(rayL, out hit, 1f, groundLayer))
+                {
+                    hitCounts++;
+                }
+                if (hitCounts > 1)
+                {
+                    HandleLayEgg();
+                }
+            }
+        }
+    }
+
+    private void OnChaseEnter()
+    {
+        //TODO: Chase sound
+    }
+
+    /// <summary>
+    /// Following the player to attack
+    /// </summary>
+    private void OnChase()
+    {
+        navAgent.SetDestination(PlayerController.instance.transform.position);
+        if(playerInSight && Vector3.Distance(transform.position, PlayerController.instance.transform.position) < 5f)
+        {
+            brain.PushState(OnAttack, OnAttackEnter, OnAttackExit);
+        }
+        else if(!playerInSight && lastPlayerSight < Time.time)
+        {
+            brain.PopState();
+        }
+    }
+
+    private void OnChaseExit()
+    {
+        //TODO: End chase sound
+    }
+
+    private void OnAttackEnter()
+    {
+        navAgent.ResetPath();
+    }
+
+    /// <summary>
+    /// Attack sequence
+    /// </summary>
+    private void OnAttack()
+    {
+        attackTimer-= Time.deltaTime;
+        if(Vector3.Distance(transform.position, PlayerController.instance.transform.position) > 5f)
+        {
+            brain.PopState();
+        }
+        else if(attackTimer <= 0)
+        {
+            //TODO: Attack anim
+            PlayerController.instance.ReceiveDamage(20);
+            attackTimer = 2f;
+        }
+    }
+
+    private void OnAttackExit()
+    {
+
+    }
+
+    #endregion
 }

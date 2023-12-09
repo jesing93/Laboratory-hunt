@@ -57,7 +57,6 @@ public class PlayerController : MonoBehaviour
     private Transform firePoint;
     private FireController fireAnimController;
 
-
     //Singletone
     public static PlayerController instance;
 
@@ -96,15 +95,18 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        IsGrounded();
-        PlayerInputs();
-        Fire();
-        HandleHeat();
-        Move();
-        HandleHealthRegen();
-        //Jump();
-        SwitchCamera();
-        HandleAnimation();
+        if (!isDead && isGameStarted && Time.timeScale > 0)
+        {
+            IsGrounded();
+            PlayerInputs();
+            Fire();
+            HandleHeat();
+            Move();
+            HandleHealthRegen();
+            //Jump();
+            SwitchCamera();
+            HandleAnimation();
+        }
     }
 
     private void FixedUpdate()
@@ -135,15 +137,12 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PlayerInputs()
     {
-        if (!isDead && isGameStarted && Time.timeScale > 0)
-        {
-            //Get Imputs
-            hInput = Input.GetAxisRaw("Horizontal");
-            vInput = Input.GetAxisRaw("Vertical");
-            //jumpInput = Input.GetButtonDown("Jump");
-            fireInput = Input.GetButton("Fire1");
-            cameraModeInput = Input.GetKeyDown(KeyCode.F);
-        }
+        //Get Imputs
+        hInput = Input.GetAxisRaw("Horizontal");
+        vInput = Input.GetAxisRaw("Vertical");
+        //jumpInput = Input.GetButtonDown("Jump");
+        fireInput = Input.GetButton("Fire1");
+        cameraModeInput = Input.GetKeyDown(KeyCode.F);
     }
 
     /// <summary>
