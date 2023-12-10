@@ -7,20 +7,14 @@ public class EnemyController : MonoBehaviour
 {
     #region parameters
 
-    [Header("Movement")]
-    [Tooltip("Body Height from ground")]
-    [Range(0.5f, 5f)]
-    private float height = 0.4f;
-    private float speed = 5f;
-    Vector3 velocity = Vector3.zero;
-    private float velocityLerpCoef = 4f;
-
     //Components
     private MimicController myMimic;
     private NavMeshAgent navAgent;
     private StateMachine brain;
     [SerializeField]
     private GameObject eggPref;
+    [SerializeField]
+    private GameObject burningFX;
 
     //Vars
     private float takingFireDelay;
@@ -29,6 +23,7 @@ public class EnemyController : MonoBehaviour
     private float maxHealth;
     private float timeAlive;
     private int growStage;
+    private bool isOnFire;
     private bool isAlive;
     private bool playerInSight;
     private float lastPlayerSight;
@@ -61,11 +56,6 @@ public class EnemyController : MonoBehaviour
         brain = GetComponent<StateMachine>();
     }
 
-    private void Start()
-    {
-        brain.PushState(OnRoam, OnRoamEnter, OnRoamExit);
-    }
-
     private void Update()
     {
         if (isAlive)
@@ -76,7 +66,20 @@ public class EnemyController : MonoBehaviour
             HandleSight();
             HandleGowth();
             HandleLife();
+
+            if (transform.position.y <= 1000)
+            {
+                //currentHealth = 0;
+            }
         }
+    }
+
+    /// <summary>
+    /// Start the brain
+    /// </summary>
+    public void Init()
+    {
+        brain.PushState(OnRoam, OnRoamEnter, OnRoamExit);
     }
 
     /// <summary>
@@ -115,7 +118,7 @@ public class EnemyController : MonoBehaviour
             Vector3 point;
             if (RandomPoint(transform.position, roamRange, false, out point))
             {
-                Debug.DrawRay(point, Vector3.up, Color.red, 2f);
+                //Debug.DrawRay(point, Vector3.up, Color.red, 2f);
                 navAgent.SetDestination(point);
             }
         }
@@ -178,19 +181,24 @@ public class EnemyController : MonoBehaviour
             else if (onFireDelay > 0) //If burning
             {
                 onFireDelay -= Time.deltaTime;
-                currentHealth -= Time.deltaTime * 5;
+                currentHealth -= Time.deltaTime * 5; 
             }
             else if (currentHealth < maxHealth) //If not being damaged and not full health
             {
-                currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * 2 * growStage, 0, maxHealth);
+                if (isOnFire)
+                {
+                    isOnFire = false;
+                    burningFX.SetActive(false);
+                }
+                currentHealth = Mathf.Clamp(currentHealth + Time.deltaTime * growStage, 0, maxHealth);
             }
         }
         else //Death event
         {
             isAlive = false;
             Destroy(brain);
-            //TODO: Handle enemy death
-            Debug.Log("Die!");
+            GameManager.instance.KillEnemy(this.gameObject);
+            Destroy(this.gameObject);
         }
     }
 
@@ -203,14 +211,14 @@ public class EnemyController : MonoBehaviour
         if (growStage < 3 && timeAlive > growStage * 10)
         {
             growStage++;
-            maxHealth = 50 * growStage;
+            maxHealth = 50 + 25 * growStage;
             //Grow phisical params
             //TODO: Improve growing
-            myMimic.newLegRadius = growStage;
-            myMimic.minLegDistance = growStage;
+            myMimic.newLegRadius = growStage/2;
+            myMimic.minLegDistance = growStage/2;
             myMimic.partsPerLeg = growStage + 1;
-            height = 0.3f * growStage;
-            myMimic.ResetMimic();
+            //height = 0.3f * growStage;
+            myMimic.RegenerateLegStats();
         }
     }
 
@@ -224,6 +232,7 @@ public class EnemyController : MonoBehaviour
             remainingEggs--;
             eggDelay = Time.time + 10f;
             Instantiate(eggPref, transform.position, transform.rotation);
+
         }
     }
 
@@ -236,6 +245,15 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("Fire"))
         {
             takingFireDelay = 1f;
+            if (!isOnFire)
+            {
+                isOnFire = true;
+                burningFX.SetActive(true);
+                foreach (ParticleSystem item in burningFX.GetComponentsInChildren<ParticleSystem>())
+                {
+                    item.Play();
+                };
+            }
         }
     }
 

@@ -115,11 +115,6 @@ public class MapGenerator : MonoBehaviour
                         //Destroy the doorways
                         DestroyImmediate(createdExit.gameObject);
                         DestroyImmediate(selectedExit.gameObject);
-                        //Add prefab to the list of rooms if type = room
-                        if(currentType == GameManager.CellType.Room)
-                        {
-                            generatedRooms.Add(selectedPrefab);//TODO: Fix error
-                        }
                         //Stop searching for this prefab
                         break;
                     }
@@ -153,13 +148,34 @@ public class MapGenerator : MonoBehaviour
         }
 
         navSurface.BuildNavMesh();
+        //Spawn 1 mimic for each 5 rooms
+        int currentMimics = 0;
         for (int i = Mathf.FloorToInt(RoomCount / 5); i > 0; i--)
         {
-            int pickedRoom = Random.Range(0, generatedRooms.Count - 1);
-            Instantiate(mimicPref, generatedRooms[pickedRoom].transform.position + generatedRooms[pickedRoom].GetComponent<BoxCollider>().bounds.center, Quaternion.identity);
+            Debug.Log("Try!");
+            //If valid point: spawn & add to list
+            if (RandomSpawnPoint(out Vector3 result))
+            {
+                Debug.Log("Spawn!");
+                currentMimics++;
+                GameObject mimic = Instantiate(mimicPref, result, Quaternion.identity);
+                GameManager.instance.Mimics.Add(mimic);
+            }
+        }
+        Cell[] createdCells = GameObject.FindObjectsOfType<Cell>();
+        foreach(Cell item in createdCells)
+        {
+            item.GetComponent<BoxCollider>().enabled = false;
         }
         Debug.Log("Finished " + Time.time);
-        GameManager.instance.StartGame();
+        if(currentMimics > 0)
+        {
+            GameManager.instance.StartGame();
+        }
+        else
+        {
+            GameManager.instance.EndGame(false);
+        }
     }
 
     /// <summary>
@@ -180,5 +196,31 @@ public class MapGenerator : MonoBehaviour
             tempList.RemoveAt(index);
         }
         return shuffled;
+    }
+
+    private bool RandomSpawnPoint(out Vector3 result)
+    {
+        //Counter to avoid infinite loop
+        int failN = 0;
+        while (true)
+        {
+            //Random point
+            Vector3 spherePoint = Random.insideUnitSphere;
+            Vector3 randomPoint = transform.position + spherePoint * 20;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+            {
+                //If valid point, return
+                result = hit.position;
+                return true;
+            }
+            failN++;
+            if (failN > 1000)
+            {
+                //If too many invalid points, return empty
+                result = transform.position;
+                return false;
+            }
+        }
     }
 }

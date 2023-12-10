@@ -71,22 +71,26 @@ public class MimicController : MonoBehaviour
         ResetMimic();
     }
 
-    public void ResetMimic()
+    private void ResetMimic()
     {
-        foreach (LegController g in GameObject.FindObjectsOfType<LegController>())
+        foreach (LegController g in GetComponentsInChildren<LegController>())
         {
             Destroy(g.gameObject);
         }
         legCount = 0;
         deployedLegs = 0;
 
+        RegenerateLegStats();
+    }
+
+    public void RegenerateLegStats()
+    {
         maxLegs = numberOfLegs * partsPerLeg;
         float rot = 360f / maxLegs;
         Vector2 randV = Random.insideUnitCircle;
         velocity = new Vector3(randV.x, 0, randV.y);
         minimumAnchoredParts = minimumAnchoredLegs * partsPerLeg;
         maxLegDistance = newLegRadius * 2.1f;
-
     }
 
     IEnumerator NewLegCooldown()
@@ -131,19 +135,23 @@ public class MimicController : MonoBehaviour
                 newLegPosition = transform.position + ((newLegPosition - transform.position) + velocity.normalized * (newLegPosition - transform.position).magnitude) / 2f;
 
             RaycastHit hit;
-            Physics.Raycast(newLegPosition + Vector3.up, -Vector3.up, out hit, 100, groundLayer | defaultLayer);
-            Vector3 myHit = hit.point;
-            if (Physics.Linecast(transform.position, hit.point, out hit, groundLayer | defaultLayer))
-                myHit = hit.point;
-
-            float lifeTime = Random.Range(minLegLifetime, maxLegLifetime);
-
-            StartCoroutine("NewLegCooldown");
-            for (int i = 0; i < partsPerLeg; i++)
+            if(Physics.Raycast(newLegPosition + Vector3.up, -Vector3.up * 2, out hit, 100, groundLayer | defaultLayer))
             {
-                RequestLeg(myHit, legResolution, maxLegDistance, Random.Range(minGrowCoef, maxGrowCoef), this, lifeTime);
-                if (legCount >= maxLegs)
-                    return;
+                Vector3 myHit = hit.point;
+                if (Physics.Linecast(transform.position, hit.point, out hit, groundLayer | defaultLayer))
+                {
+                    myHit = hit.point;
+
+                    float lifeTime = Random.Range(minLegLifetime, maxLegLifetime);
+
+                    StartCoroutine("NewLegCooldown");
+                    for (int i = 0; i < partsPerLeg; i++)
+                    {
+                        RequestLeg(myHit, legResolution, maxLegDistance, Random.Range(minGrowCoef, maxGrowCoef), this, lifeTime);
+                        if (legCount >= maxLegs)
+                            return;
+                    }
+                }
             }
         }
     }

@@ -11,9 +11,11 @@ public class GameManager : MonoBehaviour
     private bool isGameEnded;
     [SerializeField]
     private GameObject playerPref;
+    private List<GameObject> mimics = new();
 
     public bool IsPaused { get => isPaused; }
     public bool GameStarted { get => isGameStarted; }
+    public List<GameObject> Mimics { get => mimics; set => mimics = value; }
 
     private void Awake()
     {
@@ -57,6 +59,10 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         isGameStarted = true;
+        foreach (GameObject mimic in Mimics)
+        {
+            mimic.GetComponent<EnemyController>().Init();
+        }
         PlayerController.instance.StartGame();
         CameraController.instance.TogglePause(isPaused);
     }
@@ -73,6 +79,15 @@ public class GameManager : MonoBehaviour
     public void InitializePlayer(Vector3 initPos)
     {
         Instantiate(playerPref, initPos, Quaternion.identity);
+    }
+
+    public void KillEnemy (GameObject mimic)
+    {
+        mimics.Remove(mimic);
+        if (mimics.Count == 0 )
+        {
+            EndGame(true);
+        }
     }
 
     //CellTypeEnum for avoid multiple corridors together

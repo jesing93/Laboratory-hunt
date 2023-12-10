@@ -39,9 +39,9 @@ public class PlayerController : MonoBehaviour
     private float currentHeat;
     private float maxHeat = 50;
     private float heatRegenTime;
-    private float heatRegenDelay = 2f;
+    private float heatRegenDelay = 0.5f;
     private float overheatDelay;
-    private float overheatTime = 5f;
+    private float overheatTime = 2f;
 
     //Components
     private Camera pCamera;
@@ -190,7 +190,7 @@ public class PlayerController : MonoBehaviour
     private void Fire()
     {
         //TODO Handle fire
-        if (fireInput && isGrounded && !isOverheat)
+        if (fireInput && !isOverheat)
         {
             isFiring = true;
             fireAnimController.Fire();
@@ -327,7 +327,7 @@ public class PlayerController : MonoBehaviour
             else if (currentHeat > 0 && heatRegenTime + heatRegenDelay < Time.time)
             {
                 //Start reducing heat a few seconds after firing
-                currentHeat = Mathf.Max(currentHeat - Time.deltaTime * 4, 0);
+                currentHeat = Mathf.Max(currentHeat - Time.deltaTime * 8, 0);
                 HudController.instance.UpdateHeat(currentHeat);
             }
         }
