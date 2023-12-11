@@ -21,6 +21,7 @@ public class StateMachine : MonoBehaviour {
 
     public void PushState(System.Action active, System.Action onEnter, System.Action onExit)
     {
+        Debug.Log("New state: " + active.Method.Name);
         if (GetCurrentState() != null)
             GetCurrentState().OnExit();
 
@@ -32,6 +33,7 @@ public class StateMachine : MonoBehaviour {
 
     public void PopState()
     {
+        Debug.Log("End state: " + GetCurrentState().ActiveAction.Method.Name);
         GetCurrentState().OnExit();
         GetCurrentState().ActiveAction = null;
         States.Pop();

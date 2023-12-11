@@ -208,7 +208,7 @@ public class MapGenerator : MonoBehaviour
             Vector3 spherePoint = Random.insideUnitSphere;
             Vector3 randomPoint = transform.position + spherePoint * 20;
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPoint, out hit, 20f, NavMesh.AllAreas))
             {
                 //If valid point, return
                 result = hit.position;

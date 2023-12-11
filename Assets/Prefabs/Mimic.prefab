@@ -76,7 +76,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -219,7 +219,7 @@ MonoBehaviour:
   minGrowCoef: 4.5
   maxGrowCoef: 6.5
   newLegCooldown: 0.3
-  velocity: {x: 0.7379298, y: 0, z: -0.19018917}
+  velocity: {x: 0.26409006, y: 0, z: 0.47004965}
 --- !u!1001 &208985022410918912
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using MimicSpace;
 using UnityEngine;
 using UnityEngine.AI;
@@ -90,6 +91,7 @@ public class EnemyController : MonoBehaviour
         //playerDistance = Vector3.Distance(transform.position, PlayerController.instance.transform.position);
         Ray ray = new(transform.position, PlayerController.instance.transform.position - transform.position);
         RaycastHit hit;
+        Debug.DrawRay(transform.position, PlayerController.instance.transform.position - transform.position);
         if(Physics.Raycast(ray, out hit, 5f, groundLayer | playerLayer))
         {
             if (hit.collider.CompareTag("Player"))
@@ -151,7 +153,7 @@ public class EnemyController : MonoBehaviour
             }
             Vector3 randomPoint = center + spherePoint * range;
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPoint, out hit, 50f, NavMesh.AllAreas))
             {
                 //If valid point, return
                 result = hit.position;
@@ -167,6 +169,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handle taking fire damage or regenerationg life
+    /// </summary>
     private void HandleLife()
     {
         //If alive
@@ -212,6 +217,11 @@ public class EnemyController : MonoBehaviour
         {
             growStage++;
             maxHealth = 50 + 25 * growStage;
+            //Update the color on growth
+            if(growStage == 2)
+            {
+                //DOTween.To<Color>(gameObject.GetComponentInChildren<MeshRenderer>().material.color, gameObject.GetComponentInChildren<MeshRenderer>().material.color, Color.red, 3f);
+            }
             //Grow phisical params
             //TODO: Improve growing
             myMimic.newLegRadius = growStage/2;
@@ -276,7 +286,7 @@ public class EnemyController : MonoBehaviour
             case 1:
                 if (playerInSight)
                 {
-                    brain.PushState(OnRunAway, null, null);
+                    brain.PushState(OnRunAway, OnRunAwayEnter, null);
                 }
                 else
                 {
@@ -286,7 +296,7 @@ public class EnemyController : MonoBehaviour
             case 2:
                 if (playerInSight)
                 {
-                    brain.PushState(OnRunAway, null, null);
+                    brain.PushState(OnRunAway, OnRunAwayEnter, null);
                 } else
                 {
                     if(remainingEggs > 0)
@@ -321,7 +331,15 @@ public class EnemyController : MonoBehaviour
 
     private void OnRoamExit()
     {
+        
+    }
 
+    /// <summary>
+    /// Simmilar to roaming but running to a far point
+    /// </summary>
+    private void OnRunAwayEnter()
+    {
+        navAgent.ResetPath();
     }
 
     /// <summary>
@@ -329,7 +347,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     private void OnRunAway()
     {
-        if (!playerInSight && lastPlayerSight <= Time.time)
+        if (!playerInSight && lastPlayerSight <= Time.time || growStage > 2)
         {
             brain.PopState();
         }
@@ -354,7 +372,14 @@ public class EnemyController : MonoBehaviour
     {
         if (playerInSight)
         {
-            brain.PushState(OnRunAway, null, null);
+            if (growStage > 2)
+            {
+                brain.PushState(OnChase, OnChaseEnter, OnChaseExit);
+            }
+            else
+            {
+                brain.PushState(OnRunAway, OnRunAwayEnter, null);
+            }
         }
         else
         {
@@ -370,15 +395,15 @@ public class EnemyController : MonoBehaviour
                 Ray rayL = new(transform.position, -transform.right);
                 RaycastHit hit;
                 int hitCounts = 0;
-                if (Physics.Raycast(rayF, out hit, 1f, groundLayer))
+                if (Physics.Raycast(rayF, out hit, 0.5f, groundLayer))
                 {
                     hitCounts++;
                 }
-                if (Physics.Raycast(rayR, out hit, 1f, groundLayer))
+                if (Physics.Raycast(rayR, out hit, 0.5f, groundLayer))
                 {
                     hitCounts++;
                 }
-                if (Physics.Raycast(rayL, out hit, 1f, groundLayer))
+                if (Physics.Raycast(rayL, out hit, 0.5f, groundLayer))
                 {
                     hitCounts++;
                 }
@@ -392,7 +417,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnChaseEnter()
     {
-        //TODO: Chase sound
+        navAgent.ResetPath();
     }
 
     /// <summary>
@@ -401,7 +426,7 @@ public class EnemyController : MonoBehaviour
     private void OnChase()
     {
         navAgent.SetDestination(PlayerController.instance.transform.position);
-        if(playerInSight && Vector3.Distance(transform.position, PlayerController.instance.transform.position) < 5f)
+        if(playerInSight && Vector3.Distance(transform.position, PlayerController.instance.transform.position) < 2f)
         {
             brain.PushState(OnAttack, OnAttackEnter, OnAttackExit);
         }
@@ -436,6 +461,7 @@ public class EnemyController : MonoBehaviour
             //TODO: Attack anim
             PlayerController.instance.ReceiveDamage(20);
             attackTimer = 2f;
+            brain.PopState();
         }
     }
 

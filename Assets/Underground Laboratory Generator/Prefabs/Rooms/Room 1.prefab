@@ -360,13 +360,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6038846813914205969}
   m_SourcePrefab: {fileID: 100100000, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
 --- !u!4 &6792077321754922168 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5876818277105208496, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
   m_PrefabInstance: {fileID: 1138541269225652232}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7336222860536140922 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+  m_PrefabInstance: {fileID: 1138541269225652232}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &6038846813914205969
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7336222860536140922}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.279, y: 0.418, z: 0.279}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &1216510407863003606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -999,8 +1023,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4005270660669713992}
   m_SourcePrefab: {fileID: 100100000, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+--- !u!1 &6067061021337076724 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+  m_PrefabInstance: {fileID: 4481382108339656582}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &4005270660669713992
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6067061021337076724}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.279, y: 0.418, z: 0.279}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!4 &8052355176390023990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5876818277105208496, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
@@ -1473,8 +1521,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 640041291298269800}
   m_SourcePrefab: {fileID: 100100000, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+--- !u!1 &2006400123028309916 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+  m_PrefabInstance: {fileID: 5791649391609819776}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &640041291298269800
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006400123028309916}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.44900003, y: 0.44900003, z: 0.34300002}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.07300001}
+  m_TimeToStationary: 0.5
 --- !u!4 &6653761239855064708 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 880166718567109636, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}

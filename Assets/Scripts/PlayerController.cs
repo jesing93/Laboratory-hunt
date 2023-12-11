@@ -285,6 +285,7 @@ public class PlayerController : MonoBehaviour
     public void ReceiveDamage(float damage)
     {
         currentHealth = MathF.Max(currentHealth - damage, 0);
+        HudController.instance.UpdateHealth(currentHealth);
         healthRegenTime = Time.time;
         if (currentHealth == 0)
         {

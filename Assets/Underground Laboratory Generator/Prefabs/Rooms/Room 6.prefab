@@ -762,8 +762,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1335175947854988309}
   m_SourcePrefab: {fileID: 100100000, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+--- !u!1 &4648376154007110898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7639114947045758066, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
+  m_PrefabInstance: {fileID: 3062957825265733760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &1335175947854988309
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4648376154007110898}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.279, y: 0.418, z: 0.279}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!4 &8867421639643929648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5876818277105208496, guid: 89f14f18f364b814b8e3c2a7258d8197, type: 3}
@@ -969,13 +993,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1495614481713183071}
   m_SourcePrefab: {fileID: 100100000, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
 --- !u!4 &4104878554550691773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 880166718567109636, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
   m_PrefabInstance: {fileID: 3801477599726449593}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9185574794998384293 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+  m_PrefabInstance: {fileID: 3801477599726449593}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &1495614481713183071
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9185574794998384293}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.44900003, y: 0.44900003, z: 0.34300002}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.07300001}
+  m_TimeToStationary: 0.5
 --- !u!1001 &4588469765235229583
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1110,8 +1158,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7789415101764966968}
   m_SourcePrefab: {fileID: 100100000, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+--- !u!1 &237394915414461325 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5456172691816297756, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
+  m_PrefabInstance: {fileID: 5256647776642989713}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &7789415101764966968
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237394915414461325}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.44900003, y: 0.44900003, z: 0.34300002}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.07300001}
+  m_TimeToStationary: 0.5
 --- !u!4 &4955551385911732885 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 880166718567109636, guid: 2cf34cf3ff398e1428fc4f3f8f600c51, type: 3}
