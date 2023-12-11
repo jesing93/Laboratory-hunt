@@ -387,7 +387,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5287121335392943616, guid: cbe8d5624e65426478980adbb35a2d55, type: 3}
       propertyPath: RoomCount
-      value: 15
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8323014519636076116, guid: cbe8d5624e65426478980adbb35a2d55, type: 3}
       propertyPath: m_LocalPosition.x
