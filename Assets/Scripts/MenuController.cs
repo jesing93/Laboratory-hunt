@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,22 +32,24 @@ public class MenuController : MonoBehaviour
 
     public void OnContinue()
     {
-        Unpause();
+        GameManager.instance.Unpause();
     }
 
     public void OnNewGame()
     {
-        StartCoroutine(LoadScene(1));
+        StartCoroutine(NextScene(1));
     }
 
     public void OnMainMenu()
     {
-        StartCoroutine(LoadScene(0));
+        StartCoroutine(NextScene(0));
     }
 
-    private IEnumerator LoadScene(int sceneId)
+    private IEnumerator NextScene(int sceneId)
     {
-        yield return new WaitForSeconds(1);
+        Debug.Log("Loading...");
+        DOTween.KillAll();
+        yield return new WaitForSecondsRealtime(1);
         SceneManager.LoadScene(sceneId);
     }
 
@@ -54,18 +57,24 @@ public class MenuController : MonoBehaviour
     {
         canvas.SetActive(true);
         pausePanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
 
     public void Unpause ()
     {
         pausePanel.SetActive(false);
         canvas.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void EndGame(bool isVictory)
     {
         canvas.SetActive(true);
         endgamePanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
         if (isVictory)
         {
             victoryTitle.SetActive(true);

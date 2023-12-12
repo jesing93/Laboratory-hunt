@@ -217,13 +217,9 @@ public class EnemyController : MonoBehaviour
         {
             growStage++;
             maxHealth = 50 + 25 * growStage;
-            //Update the color on growth
-            if(growStage == 2)
-            {
-                //DOTween.To<Color>(gameObject.GetComponentInChildren<MeshRenderer>().material.color, gameObject.GetComponentInChildren<MeshRenderer>().material.color, Color.red, 3f);
-            }
             //Grow phisical params
             //TODO: Improve growing
+            myMimic.Grow(growStage);
             myMimic.newLegRadius = growStage/2;
             myMimic.minLegDistance = growStage/2;
             myMimic.partsPerLeg = growStage + 1;

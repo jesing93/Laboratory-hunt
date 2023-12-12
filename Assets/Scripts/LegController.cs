@@ -43,6 +43,7 @@ public class LegController : MonoBehaviour
     float oscillationProgress;
 
     public Color myColor;
+    private Material mimicMat;
 
     private LayerMask groundLayer;
     private LayerMask defaultLayer;
@@ -53,9 +54,12 @@ public class LegController : MonoBehaviour
         defaultLayer = LayerMask.GetMask("Default");
     }
 
-    public void Initialize(Vector3 footPosition, int legResolution, float maxLegDistance, float growCoef, MimicController myMimic, float lifeTime)
+    public void Initialize(Vector3 footPosition, int legResolution, float maxLegDistance, float growCoef, MimicController myMimic, float lifeTime, Material parentMat)
     {
         myColor = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
+        mimicMat = parentMat;
+        GetComponent<LineRenderer>().material = mimicMat;
+        GetComponent<MeshRenderer>().material = mimicMat;
         this.footPosition = footPosition;
         this.legResolution = legResolution;
         this.maxLegDistance = maxLegDistance;

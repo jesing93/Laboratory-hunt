@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+    private void Awake()
+    {
+        Time.timeScale = 1.0f;
+    }
+
     public void OnStartGame ()
     {
         StartCoroutine(StartGameCoroutine());

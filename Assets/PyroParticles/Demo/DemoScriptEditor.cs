@@ -2,7 +2,7 @@
 
 using UnityEngine;
 using UnityEditor;
-
+/*
 namespace DigitalRuby.PyroParticles
 {
     [CustomEditor(typeof(DemoScript))]
@@ -47,4 +47,4 @@ namespace DigitalRuby.PyroParticles
             DrawDefaultInspector();
         }
     }
-}
+}*/
