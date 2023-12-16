@@ -271,7 +271,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 36f26196b7f771346b52edc2e8cf47a9, type: 2}
+  - {fileID: 2100000, guid: ebe982251cf77ea43a67196397dd9b88, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -322,7 +322,8 @@ MonoBehaviour:
   minGrowCoef: 4.5
   maxGrowCoef: 6.5
   newLegCooldown: 0.3
-  velocity: {x: 0.093368635, y: 0, z: 0.024899034}
+  velocity: {x: 0.27138814, y: 0, z: 0.09860096}
+  mimicMat: {fileID: 0}
 --- !u!1001 &208985022410918912
 PrefabInstance:
   m_ObjectHideFlags: 0

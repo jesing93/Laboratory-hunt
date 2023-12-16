@@ -1,5 +1,4 @@
 using DigitalRuby.PyroParticles;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,18 +32,17 @@ public class PlayerController : MonoBehaviour
 
     //Stats
     private float currentHealth = 100;
-    private float maxHealth = 100;
+    private readonly float maxHealth = 100;
     private float healthRegenTime;
-    private float healthRegenDelay = 10f;
+    private readonly float healthRegenDelay = 10f;
     private float currentHeat;
-    private float maxHeat = 50;
+    private readonly float maxHeat = 50;
     private float heatRegenTime;
-    private float heatRegenDelay = 0.5f;
+    private readonly float heatRegenDelay = 0.5f;
     private float overheatDelay;
-    private float overheatTime = 2f;
+    private readonly float overheatTime = 2f;
 
     //Components
-    private Camera pCamera;
     private Rigidbody rb;
     [SerializeField]
     private Transform orientation;
@@ -64,6 +62,7 @@ public class PlayerController : MonoBehaviour
     public Transform Orientation { get => orientation; set => orientation = value; }
     public GameObject Head { get => head; }
     public Transform FirePoint { get => firePoint; }
+    public Rigidbody Rb { get => rb; }
 
     #endregion
 
@@ -77,7 +76,6 @@ public class PlayerController : MonoBehaviour
         //Components
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
-        pCamera = Camera.main;
         fireAnimController = GetComponentInChildren<FireController>();
 
         groundLayer = LayerMask.GetMask("Cells");
@@ -109,10 +107,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-    }
-
     /// <summary>
     /// Ground check
     /// </summary>
@@ -122,11 +116,12 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(transform.position, Vector3.down);
 
         //If collides, is grounded
-        if (Physics.Raycast(ray, 1.1f, groundLayer))
+        if (Physics.Raycast(ray, 1.1f, groundLayer) && !isGrounded)
         {
             isGrounded = true;
+            GetComponentInChildren<PlayerAnimEvents>().FootStep();
         }
-        else
+        else if (isGrounded)
         {
             isGrounded = false;
         }
@@ -284,7 +279,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="damage"></param>
     public void ReceiveDamage(float damage)
     {
-        currentHealth = MathF.Max(currentHealth - damage, 0);
+        currentHealth = Mathf.Max(currentHealth - damage, 0);
         HudController.instance.UpdateHealth(currentHealth);
         healthRegenTime = Time.time;
         if (currentHealth == 0)
@@ -346,6 +341,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Start the character
+    /// </summary>
     public void StartGame()
     {
         isGameStarted = true;
