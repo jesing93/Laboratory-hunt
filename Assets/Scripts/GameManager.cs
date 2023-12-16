@@ -65,12 +65,9 @@ public class GameManager : MonoBehaviour
             mimic.GetComponent<EnemyController>().Init();
         }
         PlayerController.instance.StartGame();
-<<<<<<< HEAD
         CameraController.instance.TogglePause(isPaused);
         SoundController.Instance.StartLevel();
-=======
         Unpause();
->>>>>>> origin/develop
     }
 
     public void EndGame(bool isVictory)

@@ -187,7 +187,6 @@ public class MimicController : MonoBehaviour
         leg.SetActive(false);
     }
 
-<<<<<<< HEAD
     public void Die()
     {
         numberOfLegs = 0;
@@ -196,7 +195,9 @@ public class MimicController : MonoBehaviour
         foreach (LegController g in GetComponentsInChildren<LegController>())
         {
             g.Die();
-=======
+        }
+    }
+
     public void Grow(int growStage)
     {
         //Update the color on growth
@@ -213,7 +214,6 @@ public class MimicController : MonoBehaviour
             {
                 gameObject.GetComponent<MeshRenderer>().material.color = value;
             });
->>>>>>> origin/develop
         }
     }
 }
