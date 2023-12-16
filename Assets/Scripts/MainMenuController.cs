@@ -11,7 +11,9 @@ public class MainMenuController : MonoBehaviour
     private void Awake()
     {
         buttonClick = GetComponent<AudioSource>();
+        Time.timeScale = 1.0f;
     }
+
     public void OnStartGame ()
     {
         buttonClick.Play();

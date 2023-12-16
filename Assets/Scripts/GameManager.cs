@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        Time.timeScale = 0.0f;
     }
 
     void Update()
@@ -48,10 +49,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    private void Unpause()
+    public void Unpause()
     {
         isPaused = false;
-        MenuController.instance.OnContinue();
+        MenuController.instance.Unpause();
         CameraController.instance.TogglePause(isPaused);
         Time.timeScale = 1.0f;
     }
@@ -64,8 +65,12 @@ public class GameManager : MonoBehaviour
             mimic.GetComponent<EnemyController>().Init();
         }
         PlayerController.instance.StartGame();
+<<<<<<< HEAD
         CameraController.instance.TogglePause(isPaused);
         SoundController.Instance.StartLevel();
+=======
+        Unpause();
+>>>>>>> origin/develop
     }
 
     public void EndGame(bool isVictory)

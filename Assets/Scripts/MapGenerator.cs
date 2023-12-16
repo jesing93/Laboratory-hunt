@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -174,7 +175,8 @@ public class MapGenerator : MonoBehaviour
         }
         else
         {
-            GameManager.instance.EndGame(false);
+            SceneManager.LoadScene(1);
+            //GameManager.instance.StartGame();
         }
     }
 

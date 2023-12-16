@@ -1,3 +1,4 @@
+using DG.Tweening;
 using MimicSpace;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,6 +53,10 @@ public class MimicController : MonoBehaviour
     [Tooltip("This must be updates as the Mimin moves to assure great leg placement")]
     public Vector3 velocity;
 
+    //Components
+    [SerializeField]
+    private Material mimicMat;
+
     private LayerMask groundLayer;
     private LayerMask defaultLayer;
 
@@ -59,6 +64,8 @@ public class MimicController : MonoBehaviour
     {
         groundLayer = LayerMask.GetMask("Cells");
         defaultLayer = LayerMask.GetMask("Default");
+
+        mimicMat = GetComponent<MeshRenderer>().material;
     }
 
     void Start()
@@ -170,7 +177,7 @@ public class MimicController : MonoBehaviour
             newLeg = Instantiate(legPrefab, transform.position, Quaternion.identity);
         }
         newLeg.SetActive(true);
-        newLeg.GetComponent<LegController>().Initialize(footPosition, legResolution, maxLegDistance, growCoef, myMimic, lifeTime);
+        newLeg.GetComponent<LegController>().Initialize(footPosition, legResolution, maxLegDistance, growCoef, myMimic, lifeTime, mimicMat);
         newLeg.transform.SetParent(myMimic.transform);
     }
 
@@ -180,6 +187,7 @@ public class MimicController : MonoBehaviour
         leg.SetActive(false);
     }
 
+<<<<<<< HEAD
     public void Die()
     {
         numberOfLegs = 0;
@@ -188,6 +196,24 @@ public class MimicController : MonoBehaviour
         foreach (LegController g in GetComponentsInChildren<LegController>())
         {
             g.Die();
+=======
+    public void Grow(int growStage)
+    {
+        //Update the color on growth
+        if (growStage == 2)
+        {
+            DOVirtual.Color(gameObject.GetComponent<MeshRenderer>().material.color, new Color(0.1f, 0.1f, 0.1f), 5, (value) =>
+            {
+                gameObject.GetComponent<MeshRenderer>().material.color = value;
+            });
+        }
+        else
+        {
+            DOVirtual.Color(gameObject.GetComponent<MeshRenderer>().material.color, new Color(0.2f, 0.1f, 0.1f), 5, (value) =>
+            {
+                gameObject.GetComponent<MeshRenderer>().material.color = value;
+            });
+>>>>>>> origin/develop
         }
     }
 }
