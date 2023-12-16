@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
         }
         PlayerController.instance.StartGame();
         CameraController.instance.TogglePause(isPaused);
+        SoundController.Instance.StartLevel();
     }
 
     public void EndGame(bool isVictory)
@@ -72,6 +73,7 @@ public class GameManager : MonoBehaviour
         isGameEnded = true;
         MenuController.instance.EndGame(isVictory);
         CameraController.instance.TogglePause(isGameEnded);
+        SoundController.Instance.EndLevel(isVictory);
         DOTween.Kill("CamRot", false);
         Time.timeScale = 0;
     }

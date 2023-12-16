@@ -23,24 +23,29 @@ public class MenuController : MonoBehaviour
     private GameObject loseTitle;
     [SerializeField]
     private GameObject loseText;
+    private AudioSource buttonClick;
 
     private void Awake()
     {
         instance = this;
+        buttonClick = GetComponent<AudioSource>();
     }
 
     public void OnContinue()
     {
+        buttonClick.Play();
         Unpause();
     }
 
     public void OnNewGame()
     {
+        buttonClick.Play();
         StartCoroutine(LoadScene(1));
     }
 
     public void OnMainMenu()
     {
+        buttonClick.Play();
         StartCoroutine(LoadScene(0));
     }
 

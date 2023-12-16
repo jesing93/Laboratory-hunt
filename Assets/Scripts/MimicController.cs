@@ -179,4 +179,15 @@ public class MimicController : MonoBehaviour
         availableLegPool.Add(leg);
         leg.SetActive(false);
     }
+
+    public void Die()
+    {
+        numberOfLegs = 0;
+        RegenerateLegStats();
+
+        foreach (LegController g in GetComponentsInChildren<LegController>())
+        {
+            g.Die();
+        }
+    }
 }

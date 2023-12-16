@@ -1,5 +1,6 @@
 using DG.Tweening;
 using MimicSpace;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Animations;
@@ -16,6 +17,11 @@ public class EnemyController : MonoBehaviour
     private GameObject eggPref;
     [SerializeField]
     private GameObject burningFX;
+    private AudioSource mimicAudio;
+    [SerializeField]
+    private AudioClip[] mimicClips;
+    [SerializeField]
+    private AudioClip mimicDeathClip;
 
     //Vars
     private float takingFireDelay;
@@ -32,6 +38,7 @@ public class EnemyController : MonoBehaviour
     private int remainingEggs = 2;
     private float eggDelay;
     private float attackTimer = 2f;
+    private float soundDelay;
 
     private LayerMask groundLayer;
     private LayerMask playerLayer;
@@ -44,6 +51,7 @@ public class EnemyController : MonoBehaviour
         //Components
         myMimic = GetComponentInChildren<MimicController>();
         navAgent = GetComponent<NavMeshAgent>();
+        mimicAudio = GetComponent<AudioSource>();
 
         groundLayer = LayerMask.GetMask("Cells");
         playerLayer = LayerMask.GetMask("Player");
@@ -67,8 +75,9 @@ public class EnemyController : MonoBehaviour
             HandleSight();
             HandleGowth();
             HandleLife();
+            HandleSounds();
 
-            if (transform.position.y <= 1000)
+            if (transform.position.y <= 5000)
             {
                 //currentHealth = 0;
             }
@@ -200,11 +209,27 @@ public class EnemyController : MonoBehaviour
         }
         else //Death event
         {
-            isAlive = false;
-            Destroy(brain);
-            GameManager.instance.KillEnemy(this.gameObject);
-            Destroy(this.gameObject);
+            StartCoroutine(DeathSequence());
         }
+    }
+
+    /// <summary>
+    /// Handle mimic death
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DeathSequence()
+    {
+        isAlive = false;
+        Destroy(brain); 
+        mimicAudio.clip = mimicDeathClip;
+        mimicAudio.Play();
+        myMimic.Die();
+        myMimic.transform.DOScale(0.1f, 2).SetEase(Ease.InOutQuad);
+        yield return new WaitForSeconds(1);
+        myMimic.transform.DOLocalMoveY(0.1f, 1).SetEase(Ease.InOutQuad);
+        yield return new WaitForSeconds(1.5f);
+        GameManager.instance.KillEnemy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     /// <summary>
@@ -230,6 +255,21 @@ public class EnemyController : MonoBehaviour
             //height = 0.3f * growStage;
             myMimic.RegenerateLegStats();
         }
+    }
+
+    /// <summary>
+    /// Handle the reproduction of several random sounds
+    /// </summary>
+    private void HandleSounds()
+    {
+        soundDelay -= Time.deltaTime;
+        if(soundDelay < 0)
+        {
+            soundDelay = Random.Range(10f, 20f);
+            mimicAudio.clip = mimicClips[Random.Range(0, mimicClips.Length - 1)];
+            mimicAudio.Play();
+        }
+
     }
 
     /// <summary>

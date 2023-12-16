@@ -238,4 +238,9 @@ public class LegController : MonoBehaviour
         }
         return curveHandles[0];
     }
+
+    public void Die()
+    {
+        growTarget = 0;
+    }
 }
