@@ -45,7 +45,14 @@ public class MapGenerator : MonoBehaviour
         Cell StartRoom = Instantiate(CellRoomPrefabs[Random.Range(0, CellRoomPrefabs.Count)], Vector3.zero, Quaternion.identity);
         for (int i = 0; i < StartRoom.Exits.Length; i++) CreatedExits.Add(StartRoom.Exits[i].transform);
         StartRoom.TriggerBox.enabled = true;
+        //Initialize the player
         Vector3 playerStartPos = StartRoom.transform.position + StartRoom.GetComponent<BoxCollider>().bounds.center;
+        Ray ray = new Ray(playerStartPos, Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask("Cells")))
+        {
+            playerStartPos = hit.point + new Vector3(0, 1.4f, 0);
+        }
         GameManager.instance.InitializePlayer(playerStartPos);
 
         //Set a limit to avoid infinite loop
@@ -171,12 +178,12 @@ public class MapGenerator : MonoBehaviour
         Debug.Log("Finished " + Time.time);
         if(currentMimics > 0)
         {
-            GameManager.instance.StartGame();
+            GameManager.instance.StartSequence();
         }
         else
         {
             SceneManager.LoadScene(1);
-            //GameManager.instance.StartGame();
+            //GameManager.instance.StartSequence();
         }
     }
 

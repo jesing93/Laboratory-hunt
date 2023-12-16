@@ -2,6 +2,10 @@ using DigitalRuby.PyroParticles;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
+using Unity.VisualScripting;
+using DG.Tweening;
+using System.Threading;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +18,10 @@ public class PlayerController : MonoBehaviour
     private bool isOverheat;
     private bool isGameStarted;
     private bool FPSMode;
+    private float rotSensibility = 400;
+    private float rotDelay = 0.25f;
+    private float rotation;
+
     private LayerMask groundLayer;
 
     //Movement
@@ -25,6 +33,8 @@ public class PlayerController : MonoBehaviour
     private bool jumpInput;
     private bool cameraModeInput;
     private bool fireInput;
+    private float hCamInput;
+    private float vCamInput;
 
     private Vector3 direction;
     private Vector3 currentMovement;
@@ -47,6 +57,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform orientation;
     [SerializeField]
+    private Transform lookAtTarget;
+    [SerializeField]
     private GameObject head;
     private Animator animator;
     [SerializeField]
@@ -54,6 +66,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Transform firePoint;
     private FireController fireAnimController;
+    private CinemachineVirtualCamera FPSCamera;
+    private CinemachineVirtualCamera TPSCamera;
 
     //Singletone
     public static PlayerController instance;
@@ -77,6 +91,14 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
         fireAnimController = GetComponentInChildren<FireController>();
+        //Init FPS camera
+        FPSCamera = GameObject.FindGameObjectWithTag("FPVC").GetComponent<CinemachineVirtualCamera>();
+        FPSCamera.Follow = head.transform;
+        FPSCamera.LookAt = lookAtTarget;
+        //Init TPS camera
+        TPSCamera = GameObject.FindGameObjectWithTag("TPVC").GetComponent<CinemachineVirtualCamera>();
+        TPSCamera.Follow = transform;
+        TPSCamera.LookAt = lookAtTarget;
 
         groundLayer = LayerMask.GetMask("Cells");
 
@@ -119,7 +141,8 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, 1.1f, groundLayer) && !isGrounded)
         {
             isGrounded = true;
-            GetComponentInChildren<PlayerAnimEvents>().FootStep();
+            //TODO: Step sound on falling
+            //GetComponentInChildren<PlayerAnimEvents>().FootStep();
         }
         else if (isGrounded)
         {
@@ -135,16 +158,19 @@ public class PlayerController : MonoBehaviour
         //Get Imputs
         hInput = Input.GetAxisRaw("Horizontal");
         vInput = Input.GetAxisRaw("Vertical");
+        hCamInput = Input.GetAxisRaw("Mouse X");
+        vCamInput = Input.GetAxisRaw("Mouse Y");
         //jumpInput = Input.GetButtonDown("Jump");
         fireInput = Input.GetButton("Fire1");
         cameraModeInput = Input.GetKeyDown(KeyCode.F);
     }
 
     /// <summary>
-    /// Handle player movement
+    /// Handle player movement and rotation
     /// </summary>
     private void Move()
     {
+        //Player movement
         if(hInput != 0 || vInput != 0)
         {
             //Calculate movement direction
@@ -174,9 +200,39 @@ public class PlayerController : MonoBehaviour
             currentMovement.y = rb.velocity.y; 
             rb.velocity = currentMovement;
         }
+        //Horizontal rotation
+        if (hCamInput != 0)
+        {
+            rotation += hCamInput * rotSensibility * Time.deltaTime;
+            //Normalize yRotation
+            if (rotation > 360)
+            {
+                rotation -= 360;
+            }
+            else if (rotation < 0)
+            {
+                rotation += 360;
+            }
+        }
+        //Horizontal rotation target
+        orientation.rotation = Quaternion.Euler(new Vector3(0, rotation, 0));
+        if(FPSMode)
+        {
+            //Rotate the player horizontally smoothly
+            transform.rotation = orientation.rotation;
+        }
+        else
+        {
+            //Rotate the player horizontally smoothly
+            transform.DORotate(orientation.rotation.eulerAngles, rotDelay, RotateMode.Fast).SetId("CamRot");
+        }
 
-        //Rotate to camera direction
-        transform.rotation = orientation.rotation;
+        //Vertical rotation
+        if (vCamInput != 0)
+        {
+            float newLookAt = Mathf.Clamp(lookAtTarget.localPosition.y + vCamInput * (rotSensibility / 10) * Time.deltaTime, -2, 2);
+            lookAtTarget.localPosition = new Vector3(0, newLookAt, 5);
+        }
     }
 
     /// <summary>
@@ -257,7 +313,9 @@ public class PlayerController : MonoBehaviour
     {
         FPSMode = false;
         //playerMesh.SetActive(true);
-        CameraHolder.instance.SwitchToTPS();
+        //CameraHolder.instance.SwitchToTPS();
+        rotDelay = 0.25f;
+        FPSCamera.Priority = 9;
         HudController.instance.SwitchToTPS();
     }
 
@@ -269,7 +327,9 @@ public class PlayerController : MonoBehaviour
     {
         FPSMode = true;
         //playerMesh.SetActive(false);
-        CameraHolder.instance.SwitchToFPS();
+        //CameraHolder.instance.SwitchToFPS();
+        rotDelay = 0;
+        FPSCamera.Priority = 11;
         HudController.instance.SwitchToFPS();
     }
 

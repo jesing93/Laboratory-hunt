@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     private bool isGameEnded;
     [SerializeField]
     private GameObject playerPref;
+    [SerializeField]
+    private GameObject dollyPref;
     private List<GameObject> mimics = new();
 
     public bool IsPaused { get => isPaused; }
@@ -57,6 +59,11 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
     }
 
+    public void StartSequence()
+    {
+        Instantiate(dollyPref, PlayerController.instance.transform.position, Quaternion.identity);
+    }
+
     public void StartGame()
     {
         isGameStarted = true;
@@ -65,7 +72,7 @@ public class GameManager : MonoBehaviour
             mimic.GetComponent<EnemyController>().Init();
         }
         PlayerController.instance.StartGame();
-        CameraController.instance.TogglePause(isPaused);
+        //CameraController.instance.TogglePause(isPaused);
         SoundController.Instance.StartLevel();
         Unpause();
     }

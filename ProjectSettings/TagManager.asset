@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Fire
   - FireLayer
+  - TPVC
+  - FPVC
   layers:
   - Default
   - TransparentFX
