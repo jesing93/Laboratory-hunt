@@ -18,6 +18,7 @@ public class MainMenuController : MonoBehaviour
 
     //Vars
     private GameObject activePanel;
+    private bool isLoadingSettings;
 
     private void Awake()
     {
@@ -87,18 +88,22 @@ public class MainMenuController : MonoBehaviour
 
     public void OnSettingsChanged()
     {
-        //Save settings
-        PlayerPrefs.SetFloat("MasterVolume", settingsItems[0].GetComponent<Slider>().value);
-        PlayerPrefs.SetFloat("MusicVolume", settingsItems[1].GetComponent<Slider>().value);
-        PlayerPrefs.SetFloat("SFXVolume", settingsItems[2].GetComponent<Slider>().value);
-        PlayerPrefs.SetFloat("UIVolume", settingsItems[3].GetComponent<Slider>().value);
-        PlayerPrefs.SetFloat("Sensibility", settingsItems[4].GetComponent<Slider>().value);
-        //Applying to the audio mixer
-        ApplyPrefs();
+        if (!isLoadingSettings)
+        {
+            //Save settings
+            PlayerPrefs.SetFloat("MasterVolume", settingsItems[0].GetComponent<Slider>().value);
+            PlayerPrefs.SetFloat("MusicVolume", settingsItems[1].GetComponent<Slider>().value);
+            PlayerPrefs.SetFloat("SFXVolume", settingsItems[2].GetComponent<Slider>().value);
+            PlayerPrefs.SetFloat("UIVolume", settingsItems[3].GetComponent<Slider>().value);
+            PlayerPrefs.SetFloat("Sensibility", settingsItems[4].GetComponent<Slider>().value);
+            //Applying to the audio mixer
+            ApplyPrefs();
+        }
     }
 
     private void LoadPrefs()
     {
+        isLoadingSettings = true;
         if (PlayerPrefs.HasKey("MasterVolume"))
         {
             //Update UI
@@ -106,7 +111,9 @@ public class MainMenuController : MonoBehaviour
             settingsItems[1].GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
             settingsItems[2].GetComponent<Slider>().value = PlayerPrefs.GetFloat("SFXVolume");
             settingsItems[3].GetComponent<Slider>().value = PlayerPrefs.GetFloat("UIVolume");
+            settingsItems[4].GetComponent<Slider>().value = PlayerPrefs.GetFloat("Sensibility");
         }
+        isLoadingSettings = false;
     }
 
     private void ApplyPrefs()
