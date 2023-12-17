@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
             mimic.GetComponent<EnemyController>().Init();
         }
         PlayerController.instance.StartGame();
+        MenuController.instance.StartGame();
         //CameraController.instance.TogglePause(isPaused);
     }
 

@@ -104,11 +104,11 @@ public class PlayerController : MonoBehaviour
 
         //Initialize
         FPSMode = false;
-        UpdateSensibility();
     }
 
     private void Start()
     {
+        UpdateSensibility();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         //isGameStarted = true; //TODO: Delete once gameflow is finished

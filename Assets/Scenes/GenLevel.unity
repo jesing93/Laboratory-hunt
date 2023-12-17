@@ -1064,7 +1064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5287121335392943616, guid: cbe8d5624e65426478980adbb35a2d55, type: 3}
       propertyPath: RoomCount
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8323014519636076116, guid: cbe8d5624e65426478980adbb35a2d55, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1295,10 +1295,10 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2038266108248915776}
+  - {fileID: 1606310233}
   - {fileID: 8254937536262403935}
   - {fileID: 1326078890}
   - {fileID: 54905316}
-  - {fileID: 1606310233}
   - {fileID: 351269864}
   - {fileID: 1821653225}
   - {fileID: 7331054039520209983}

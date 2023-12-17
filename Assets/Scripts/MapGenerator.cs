@@ -16,9 +16,6 @@ public class MapGenerator : MonoBehaviour
     public List<Cell> CellRoomPrefabs;
     public List<Cell> CellCorridorPrefabs;
 
-    private GameManager.CellType currentType;
-    private List<Cell> generatedRooms;
-
     //Components
     private NavMeshSurface navSurface;
     [SerializeField]
@@ -72,12 +69,10 @@ public class MapGenerator : MonoBehaviour
             if (createdExit.GetComponentInParent<Cell>().cellType == GameManager.CellType.Room)
             {
                 shuffledCells = ShuffleCellList(CellCorridorPrefabs);
-                currentType = GameManager.CellType.Corridor;
             }
             else
             {
                 shuffledCells = ShuffleCellList(CellRoomPrefabs);
-                currentType = GameManager.CellType.Room;
             }
 
             //Try each prefab to get one that have enough space
@@ -155,23 +150,24 @@ public class MapGenerator : MonoBehaviour
             DestroyImmediate(CreatedExits[i].gameObject);
         }
 
+        //Disable all cells box collider
+        Cell[] createdCells = GameObject.FindObjectsOfType<Cell>();
+        foreach (Cell item in createdCells)
+        {
+            item.GetComponent<BoxCollider>().enabled = false;
+            item.gameObject.isStatic = true;
+        }
+
         navSurface.BuildNavMesh();
         //Spawn 1 mimic for each 5 rooms
         int currentMimics = 0;
         for (int i = Mathf.FloorToInt(RoomCount / 5); i > 0; i--)
         {
             //If valid point: spawn & add to list
-            if (RandomSpawnPoint(out Vector3 result))
-            {
-                currentMimics++;
-                GameObject mimic = Instantiate(mimicPref, result, Quaternion.identity);
-                GameManager.instance.Mimics.Add(mimic);
-            }
-        }
-        Cell[] createdCells = GameObject.FindObjectsOfType<Cell>();
-        foreach(Cell item in createdCells)
-        {
-            item.GetComponent<BoxCollider>().enabled = false;
+            RandomSpawnPoint(out Vector3 result);
+            currentMimics++;
+            GameObject mimic = Instantiate(mimicPref, result, Quaternion.identity);
+            GameManager.instance.Mimics.Add(mimic);
         }
         Debug.Log("Finished " + Time.time);
         if(currentMimics > 0)

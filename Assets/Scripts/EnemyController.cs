@@ -57,7 +57,6 @@ public class EnemyController : MonoBehaviour
         playerLayer = LayerMask.GetMask("Player");
 
         //Initialize
-        isAlive = true;
         currentHealth = maxHealth = 50;
         timeAlive = 0;
         growStage = 1;
@@ -77,6 +76,7 @@ public class EnemyController : MonoBehaviour
             HandleLife();
             HandleSounds();
 
+            //If map falling: kill
             if (transform.position.y <= 5000)
             {
                 //currentHealth = 0;
@@ -89,6 +89,7 @@ public class EnemyController : MonoBehaviour
     /// </summary>
     public void Init()
     {
+        isAlive = true;
         brain.PushState(OnRoam, OnRoamEnter, OnRoamExit);
     }
 

@@ -33,6 +33,8 @@ public class MenuController : MonoBehaviour
     private GameObject[] settingsItems;
     [SerializeField]
     private AudioMixer audioMixer;
+    [SerializeField]
+    private GameObject loadingScreen;
 
     //Vars
     private GameObject activePanel;
@@ -145,6 +147,12 @@ public class MenuController : MonoBehaviour
             loseTitle.SetActive(true);
             loseText.SetActive(true);
         }
+    }
+
+    public void StartGame()
+    {
+        canvas.SetActive(false);
+        loadingScreen.SetActive(false);
     }
 
     public void OnSettingsChanged()
