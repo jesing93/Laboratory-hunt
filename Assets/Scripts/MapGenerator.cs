@@ -160,11 +160,9 @@ public class MapGenerator : MonoBehaviour
         int currentMimics = 0;
         for (int i = Mathf.FloorToInt(RoomCount / 5); i > 0; i--)
         {
-            Debug.Log("Try!");
             //If valid point: spawn & add to list
             if (RandomSpawnPoint(out Vector3 result))
             {
-                Debug.Log("Spawn!");
                 currentMimics++;
                 GameObject mimic = Instantiate(mimicPref, result, Quaternion.identity);
                 GameManager.instance.Mimics.Add(mimic);
@@ -215,9 +213,9 @@ public class MapGenerator : MonoBehaviour
         {
             //Random point
             Vector3 spherePoint = Random.insideUnitSphere;
-            Vector3 randomPoint = transform.position + spherePoint * 20;
+            Vector3 randomPoint = transform.position + (spherePoint * 20);
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomPoint, out hit, 20f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPoint, out hit, 21f, NavMesh.AllAreas))
             {
                 //If valid point, return
                 result = hit.position;

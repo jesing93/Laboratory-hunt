@@ -104,6 +104,7 @@ public class PlayerController : MonoBehaviour
 
         //Initialize
         FPSMode = false;
+        UpdateSensibility();
     }
 
     private void Start()
@@ -407,6 +408,13 @@ public class PlayerController : MonoBehaviour
     public void StartGame()
     {
         isGameStarted = true;
+    }
+
+    public void UpdateSensibility()
+    {
+        if (PlayerPrefs.HasKey("Sensibility")){
+            rotSensibility = PlayerPrefs.GetFloat("Sensibility");
+        }
     }
 
     #endregion
