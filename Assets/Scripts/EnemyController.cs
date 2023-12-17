@@ -278,7 +278,6 @@ public class EnemyController : MonoBehaviour
             remainingEggs--;
             eggDelay = Time.time + 10f;
             Instantiate(eggPref, transform.position, transform.rotation);
-
         }
     }
 

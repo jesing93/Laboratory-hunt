@@ -122,7 +122,7 @@ AudioSource:
   m_GameObject: {fileID: 193599585384123526}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 94149431903661119, guid: cbc77d39ed6de374ea090bcbfd04d4f3, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -322,7 +322,7 @@ MonoBehaviour:
   minGrowCoef: 4.5
   maxGrowCoef: 6.5
   newLegCooldown: 0.3
-  velocity: {x: 0.27138814, y: 0, z: 0.09860096}
+  velocity: {x: 0.19994262, y: 0, z: 0.43955258}
   mimicMat: {fileID: 0}
 --- !u!1001 &208985022410918912
 PrefabInstance:

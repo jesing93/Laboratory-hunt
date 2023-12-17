@@ -14,10 +14,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject dollyPref;
     private List<GameObject> mimics = new();
+    private List<GameObject> eggs = new();
 
     public bool IsPaused { get => isPaused; }
     public bool GameStarted { get => isGameStarted; }
     public List<GameObject> Mimics { get => mimics; set => mimics = value; }
+    public List<GameObject> Eggs { get => eggs; set => eggs = value; }
 
     private void Awake()
     {
@@ -61,7 +63,9 @@ public class GameManager : MonoBehaviour
 
     public void StartSequence()
     {
-        Instantiate(dollyPref, PlayerController.instance.transform.position, Quaternion.identity);
+        SoundController.Instance.StartLevel();
+        Unpause();
+        StartDolly.instance.PlayDolly();
     }
 
     public void StartGame()
@@ -73,8 +77,6 @@ public class GameManager : MonoBehaviour
         }
         PlayerController.instance.StartGame();
         //CameraController.instance.TogglePause(isPaused);
-        SoundController.Instance.StartLevel();
-        Unpause();
     }
 
     public void EndGame(bool isVictory)
@@ -90,12 +92,22 @@ public class GameManager : MonoBehaviour
     public void InitializePlayer(Vector3 initPos)
     {
         Instantiate(playerPref, initPos, Quaternion.identity);
+        Instantiate(dollyPref, PlayerController.instance.transform.position, Quaternion.identity);
     }
 
-    public void KillEnemy (GameObject mimic)
+    public void KillEnemy(GameObject mimic)
     {
         mimics.Remove(mimic);
-        if (mimics.Count == 0 )
+        if (mimics.Count == 0 && eggs.Count == 0)
+        {
+            EndGame(true);
+        }
+    }
+
+    public void KillEgg(GameObject egg)
+    {
+        eggs.Remove(egg);
+        if (mimics.Count == 0 && eggs.Count == 0)
         {
             EndGame(true);
         }

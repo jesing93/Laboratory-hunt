@@ -1,4 +1,5 @@
 using DG.Tweening;
+using MimicSpace;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class EggController : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         LayTime = Time.time + timeToEclosion;
+        GameManager.instance.Eggs.Add(this.gameObject);
     }
 
     // Update is called once per frame
@@ -23,8 +25,13 @@ public class EggController : MonoBehaviour
     {
         if(LayTime <= Time.time && !isDestroying)
         {
-            //Hatch
-            Instantiate(mimicPref, transform.position, transform.rotation);
+            //Spawn mimic
+            GameObject mimic = Instantiate(mimicPref, transform.position, transform.rotation);
+            //Add mimic to GameManager
+            GameManager.instance.Mimics.Add(mimic);
+            //Init mimic
+            mimic.GetComponent<EnemyController>().Init();
+            //Self destroy
             StartCoroutine(SelfDestroy());
         }
     }
@@ -38,6 +45,8 @@ public class EggController : MonoBehaviour
         isDestroying = true;
         //Stop anim
         anim.SetTrigger("End");
+        //Remove from GameManager
+        GameManager.instance.KillEgg(this.gameObject);
         yield return new WaitForSeconds(0.5f);
         //Shrink before destroy
         transform.DOScaleY(0.01f, 2.5f);

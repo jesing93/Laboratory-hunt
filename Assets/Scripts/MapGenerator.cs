@@ -51,7 +51,7 @@ public class MapGenerator : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 10, LayerMask.GetMask("Cells")))
         {
-            playerStartPos = hit.point + new Vector3(0, 1.4f, 0);
+            playerStartPos = hit.point + new Vector3(0, 0.7f, 0);
         }
         GameManager.instance.InitializePlayer(playerStartPos);
 

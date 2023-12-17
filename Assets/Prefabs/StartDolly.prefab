@@ -174,7 +174,7 @@ MonoBehaviour:
     roll: 0
   - position: {x: 2, y: 1, z: 0}
     roll: 0
-  - position: {x: 1, y: 1.5, z: -1.5}
+  - position: {x: 0.5, y: 1.5, z: -1}
     roll: 0
 --- !u!1 &5037438942563830772
 GameObject:
@@ -302,7 +302,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7374071142015274434}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.031463765, y: 0.89533126, z: 0.06407578, w: 0.43964338}
+  m_LocalRotation: {x: -0.02978536, y: 0.8968929, z: 0.061132718, w: 0.43698823}
   m_LocalPosition: {x: 0, y: 0.5, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

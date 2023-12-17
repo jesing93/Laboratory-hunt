@@ -18,25 +18,24 @@ public class StartDolly : MonoBehaviour
         instance = this;
         cart = GetComponentInChildren<CinemachineDollyCart>();
         virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        virtualCamera.Follow = PlayerController.instance.Head.transform;
+        virtualCamera.LookAt = PlayerController.instance.Head.transform;
+        Camera.main.GetComponent<CinemachineBrain>().m_IgnoreTimeScale = true;
     }
 
-    private void Start()
+    public void PlayDolly()
     {
-        Debug.Log("Dolly");
-        PlayDolly();
-    }
-
-    private void PlayDolly()
-    {
+        Time.timeScale = 1.0f;
+        Camera.main.GetComponent<CinemachineBrain>().m_IgnoreTimeScale = false;
         cart.m_Speed = 0.8f;
         StartCoroutine(EndDolly());
     }
 
     private IEnumerator EndDolly()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSecondsRealtime(4f);
         GameManager.instance.StartGame();
-        Destroy(this);
+        virtualCamera.Priority = 0;
+        yield return new WaitForSecondsRealtime(2f);
+        Destroy(transform.gameObject);
     }
 }
